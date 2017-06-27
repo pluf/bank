@@ -102,7 +102,7 @@ class Bank_Engine_Zarinpal extends Bank_Engine
         
         // Redirect to URL You can do it also by creating a form
         if ($result->Status != 100) {
-            throw new Bank_Exception_Engine('fail to create payment');
+            throw new Bank_Exception('fail to create payment: zarinpal server erro');
         }
         $receipt->putMeta('Authority', $result->Authority);
         $receipt->callUrl = 'https://www.zarinpal.com/pg/StartPay/' .

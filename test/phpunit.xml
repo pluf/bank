@@ -2,7 +2,7 @@
 <phpunit colors="true">
     <testsuites>
         <testsuite name="pluf/bank">
-            <directory>./Bank_Api/</directory>
+            <directory>./Service/</directory>
         </testsuite>
     </testsuites>
 </phpunit>
