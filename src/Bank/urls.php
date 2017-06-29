@@ -22,7 +22,7 @@ return array(
         array(
                 'regex' => '#^/$#',
                 'model' => 'Bank_Views_Main',
-                'method' => 'modeul',
+                'method' => 'module',
                 'http-method' => array(
                         'GET'
                 )
