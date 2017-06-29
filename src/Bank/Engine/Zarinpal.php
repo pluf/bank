@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+use Zarinpal\Zarinpal;
 
 /**
- * 
- * @author maso<mostafa.barmshory@dpq.co.ir>
  *
+ * @author maso<mostafa.barmshory@dpq.co.ir>
+ *        
  */
 class Bank_Engine_Zarinpal extends Bank_Engine
 {
@@ -88,25 +89,19 @@ class Bank_Engine_Zarinpal extends Bank_Engine
             return;
         }
         
-        // maso, 1395: ایجاد یک پرداخت
-        $client = $this->getClient();
-        $result = $client->PaymentRequest(
-                [
-                        'MerchantID' => $MerchantID,
-                        'Amount' => $receipt->amount,
-                        'Description' => $receipt->description,
-                        'Email' => $receipt->email,
-                        'Mobile' => $receipt->phone,
-                        'CallbackURL' => $receipt->callbackURL
-                ]);
+        $gate = new Zarinpal($MerchantID);
+        $answer = $gate->request($receipt->callbackURL, $receipt->amount, 
+                $receipt->description, $receipt->email, $receipt->phone);
+        
+        if (isset($answer['Authority'])) {
+            file_put_contents('Authority', $answer['Authority']);
+            $receipt->putMeta('Authority', $answer['Authority']);
+            $receipt->callUrl = 'https://www.zarinpal.com/pg/StartPay/' .
+                     $answer['Authority'];
+        }
         
         // Redirect to URL You can do it also by creating a form
-        if ($result->Status != 100) {
-            throw new Bank_Exception('fail to create payment: zarinpal server erro');
-        }
-        $receipt->putMeta('Authority', $result->Authority);
-        $receipt->callUrl = 'https://www.zarinpal.com/pg/StartPay/' .
-                 $result->Authority;
+        throw new Bank_Exception('fail to create payment: zarinpal server erro');
     }
 
     /**
@@ -129,34 +124,13 @@ class Bank_Engine_Zarinpal extends Bank_Engine
         // maso, 1395: تایید یک پرداخت
         // $wsdlCheck = 'Location: https://sandbox.zarinpal.com/pg/StartPay/'
         // .$result->Authority
-        $client = $this->getClient();
-        $result = $client->PaymentVerification(
-                [
-                        'MerchantID' => $MerchantID,
-                        'Authority' => $Authority,
-                        'Amount' => $receipt->amount
-                ]);
-        if ($result->Status == 100) {
-            throw new Bank_Exception_Engine('fail to check payment');
-        }
+        $client= new Zarinpal($MerchantID);
+        $result = $client->verify('OK', $receipt->amount, $Authority);
         $receipt->payRef = $result->RefID;
         return true;
-    }
-
-    private function getClient ()
-    {
-        if ($this->client) {
-            return $this->client;
-        }
-        $wsdl = 'https://sandbox.zarinpal.com/pg/services/WebGate/wsdl';
-        $this->client = new SoapClient($wsdl, 
-                array(
-                        'encoding' => 'UTF-8',
-                        'soap_version' => SOAP_1_1,
-                        'trace' => 0,
-                        'exceptions' => 1,
-                        'connection_timeout' => 180
-                ));
-        return $this->client;
+        
+//         if ($result->Status == 100) {
+//             throw new Bank_Exception_Engine('fail to check payment');
+//         }
     }
 }
