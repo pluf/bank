@@ -94,10 +94,10 @@ class Bank_Engine_Zarinpal extends Bank_Engine
                 $receipt->description, $receipt->email, $receipt->phone);
         
         if (isset($answer['Authority'])) {
-            file_put_contents('Authority', $answer['Authority']);
             $receipt->setMeta('Authority', $answer['Authority']);
             $receipt->callUrl = 'https://www.zarinpal.com/pg/StartPay/' .
                     $answer['Authority'];
+            return;
         }
         
         // Redirect to URL You can do it also by creating a form
