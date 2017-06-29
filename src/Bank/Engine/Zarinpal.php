@@ -95,7 +95,7 @@ class Bank_Engine_Zarinpal extends Bank_Engine
         
         if (isset($answer['Authority'])) {
             $receipt->setMeta('Authority', $answer['Authority']);
-            $receipt->callUrl = 'https://www.zarinpal.com/pg/StartPay/' .
+            $receipt->callURL= 'https://www.zarinpal.com/pg/StartPay/' .
                     $answer['Authority'];
             return;
         }
