@@ -21,15 +21,15 @@ use Zarinpal\Zarinpal;
 /**
  *
  * @author maso<mostafa.barmshory@dpq.co.ir>
- *        
+ *
  */
 class Bank_Engine_Zarinpal extends Bank_Engine
 {
-
+    
     const MerchantID = 'MerchantID';
-
+    
     var $client = false;
-
+    
     /*
      *
      */
@@ -37,7 +37,7 @@ class Bank_Engine_Zarinpal extends Bank_Engine
     {
         return 'Zarin Pal';
     }
-
+    
     /*
      *
      */
@@ -45,7 +45,7 @@ class Bank_Engine_Zarinpal extends Bank_Engine
     {
         return 'Zarin Pal Payment Service';
     }
-
+    
     /*
      *
      */
@@ -70,13 +70,13 @@ class Bank_Engine_Zarinpal extends Bank_Engine
                 )
         );
     }
-
+    
     /*
      */
     public function create ($receipt)
     {
         $backend = $receipt->get_backend();
-        $MerchantID = $backend->get(Bank_Engine_Zarinpal::MerchantID);
+        $MerchantID = $backend->getMeta(Bank_Engine_Zarinpal::MerchantID);
         $Authority = $receipt->getMeta('Authority', null);
         // Check
         Pluf_Assert::assertNull($Authority, 'Receipt is created before');
@@ -90,26 +90,26 @@ class Bank_Engine_Zarinpal extends Bank_Engine
         }
         
         $gate = new Zarinpal($MerchantID);
-        $answer = $gate->request($receipt->callbackURL, $receipt->amount, 
+        $answer = $gate->request($receipt->callbackURL, $receipt->amount,
                 $receipt->description, $receipt->email, $receipt->phone);
         
         if (isset($answer['Authority'])) {
-            file_put_contents('Authority', $answer['Authority']);
-            $receipt->putMeta('Authority', $answer['Authority']);
-            $receipt->callUrl = 'https://www.zarinpal.com/pg/StartPay/' .
-                     $answer['Authority'];
+            $receipt->setMeta('Authority', $answer['Authority']);
+            $receipt->callURL= 'https://www.zarinpal.com/pg/StartPay/' .
+                    $answer['Authority'];
+            return;
         }
         
         // Redirect to URL You can do it also by creating a form
         throw new Bank_Exception('fail to create payment: zarinpal server erro');
     }
-
+    
     /**
      */
     public function update ($receipt)
     {
         $backend = $receipt->get_backend();
-        $MerchantID = $backend->get(Bank_Engine_Zarinpal::MerchantID);
+        $MerchantID = $backend->getMeta(Bank_Engine_Zarinpal::MerchantID);
         $Authority = $receipt->getMeta('Authority', null);
         // Check
         Pluf_Assert::assertNotNull($Authority, 'Receipt is created before');
@@ -129,8 +129,8 @@ class Bank_Engine_Zarinpal extends Bank_Engine
         $receipt->payRef = $result->RefID;
         return true;
         
-//         if ($result->Status == 100) {
-//             throw new Bank_Exception_Engine('fail to check payment');
-//         }
+        //         if ($result->Status == 100) {
+        //             throw new Bank_Exception_Engine('fail to check payment');
+        //         }
     }
 }
