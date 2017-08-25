@@ -251,6 +251,6 @@ class Bank_Receipt extends Pluf_Model
      */
     function isPayed ()
     {
-        return ! is_null($this->payRef);
+        return !is_null($this->payRef) && (strlen($this->payRef) > 0);
     }
 }
