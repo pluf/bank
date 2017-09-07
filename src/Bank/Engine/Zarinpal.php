@@ -124,13 +124,15 @@ class Bank_Engine_Zarinpal extends Bank_Engine
         // maso, 1395: تایید یک پرداخت
         // $wsdlCheck = 'Location: https://sandbox.zarinpal.com/pg/StartPay/'
         // .$result->Authority
-        $client= new Zarinpal($MerchantID);
+        // TODO: hadi-1396-06: followig MyRestDriver is temporary and will be removed
+        // It depends on https://github.com/ZarinPal-Lab/Composer-Library/pull/4
+        $client= new Zarinpal($MerchantID, new Bank_Engine_MyRestDriver());
         $result = $client->verify('OK', $receipt->amount, $Authority);
-        $receipt->payRef = $result->RefID;
-        return true;
-        
-        //         if ($result->Status == 100) {
-        //             throw new Bank_Exception_Engine('fail to check payment');
-        //         }
+        if ($result['Status'] == 'success') {
+            $receipt->payRef = $result['RefID'];
+            return true;
+        }
+        return false;        
     }
+    
 }
