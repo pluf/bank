@@ -134,7 +134,8 @@ return array(
             'GET'
         ),
         'precond' => array(
-            'Pluf_Precondition::ownerRequired'
+            'Pluf_Precondition::loginRequired',
+            'Pluf_Precondition::authorizedRequired'
         )
     ),
     array(
