@@ -17,141 +17,162 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 return array(
-        
-        // اطلاعات بسته
-        array(
-                'regex' => '#^/$#',
-                'model' => 'Bank_Views_Main',
-                'method' => 'modeul',
-                'http-method' => array(
-                        'GET'
-                )
+    
+    // اطلاعات بسته
+    array(
+        'regex' => '#^/$#',
+        'model' => 'Bank_Views_Main',
+        'method' => 'module',
+        'http-method' => array(
+            'GET'
+        )
+    ),
+    // متورهای پرداخت
+    array(
+        'regex' => '#^/engine/find$#',
+        'model' => 'Bank_Views_Engine',
+        'method' => 'find',
+        'http-method' => array(
+            'GET'
+        )
+    ),
+    array(
+        'regex' => '#^/engine/(?P<type>.+)$#',
+        'model' => 'Bank_Views_Engine',
+        'method' => 'get',
+        'http-method' => array(
+            'GET'
+        )
+    ),
+    
+    // پشتوانه‌ها
+    array(
+        'regex' => '#^/backend/find$#',
+        'model' => 'Bank_Views_Backend',
+        'method' => 'find',
+        'http-method' => array(
+            'GET'
+        )
+    ),
+    array(
+        'regex' => '#^/backend/new$#',
+        'model' => 'Bank_Views_Backend',
+        'method' => 'createParameter',
+        'http-method' => array(
+            'GET'
+        )
+    ),
+    array(
+        'regex' => '#^/backend/new$#',
+        'model' => 'Bank_Views_Backend',
+        'method' => 'create',
+        'http-method' => array(
+            'POST'
         ),
-        // متورهای پرداخت
-        array(
-                'regex' => '#^/engine/find$#',
-                'model' => 'Bank_Views_Engine',
-                'method' => 'find',
-                'http-method' => array(
-                        'GET'
-                )
+        'precond' => array(
+            'Pluf_Precondition::ownerRequired'
+        )
+    ),
+    array(
+        'regex' => '#^/backend/(?P<id>\d+)$#',
+        'model' => 'Bank_Views_Backend',
+        'method' => 'get',
+        'http-method' => array(
+            'GET'
+        )
+    ),
+    array(
+        'regex' => '#^/backend/(?P<id>\d+)$#',
+        'model' => 'Bank_Views_Backend',
+        'method' => 'update',
+        'http-method' => array(
+            'POST'
         ),
-        array(
-                'regex' => '#^/engine/(?P<type>.+)$#',
-                'model' => 'Bank_Views_Engine',
-                'method' => 'get',
-                'http-method' => array(
-                        'GET'
-                )
+        'precond' => array(
+            'Pluf_Precondition::ownerRequired'
+        )
+    ),
+    array(
+        'regex' => '#^/backend/(?P<id>\d+)$#',
+        'model' => 'Bank_Views_Backend',
+        'method' => 'delete',
+        'http-method' => array(
+            'DELETE'
         ),
-        
-        // پشتوانه‌ها
-        array(
-                'regex' => '#^/backend/find$#',
-                'model' => 'Bank_Views_Backend',
-                'method' => 'find',
-                'http-method' => array(
-                        'GET'
-                )
-        ),
-        array(
-                'regex' => '#^/backend/new$#',
-                'model' => 'Bank_Views_Backend',
-                'method' => 'createParameter',
-                'http-method' => array(
-                        'GET'
-                )
-        ),
-        array(
-                'regex' => '#^/backend/new$#',
-                'model' => 'Bank_Views_Backend',
-                'method' => 'create',
-                'http-method' => array(
-                        'POST'
-                )
-        ),
-        array(
-                'regex' => '#^/backend/(?P<id>\d+)$#',
-                'model' => 'Bank_Views_Backend',
-                'method' => 'get',
-                'http-method' => array(
-                        'GET'
-                )
-        ),
-        array(
-                'regex' => '#^/backend/(?P<id>\d+)$#',
-                'model' => 'Bank_Views_Backend',
-                'method' => 'update',
-                'http-method' => array(
-                        'POST'
-                )
-        ),
-        array(
-                'regex' => '#^/backend/(?P<id>\d+)$#',
-                'model' => 'Bank_Views_Backend',
-                'method' => 'delete',
-                'http-method' => array(
-                        'DELETE'
-                )
-        ),
+        'precond' => array(
+            'Pluf_Precondition::ownerRequired'
+        )
+    ),
         
         /*
          * Receipt
          */
         array(
-                'regex' => '#^/receipt/find$#',
-                'model' => 'Bank_Views_Receipt',
-                'method' => 'find',
-                'http-method' => array(
-                        'GET'
-                )
+        'regex' => '#^/receipt/find$#',
+        'model' => 'Bank_Views_Receipt',
+        'method' => 'find',
+        'http-method' => array(
+            'GET'
         ),
-        array(
-                'regex' => '#^/receipt/new$#',
-                'model' => 'Bank_Views_Receipt',
-                'method' => 'create',
-                'http-method' => array(
-                        'POST'
-                )
-        ),
-        array(
-                'regex' => '#^/receipt/(?P<id>\d+)$#',
-                'model' => 'Bank_Views_Receipt',
-                'method' => 'get',
-                'http-method' => array(
-                        'GET'
-                )
-        ),
-        array(
-                'regex' => '#^/receipt/(?P<secure_id>.+)$#',
-                'model' => 'Bank_Views_Receipt',
-                'method' => 'getBySecureId',
-                'http-method' => array(
-                        'GET'
-                )
-        ),
-        array(
-                'regex' => '#^/receipt/(?P<id>\d+)$#',
-                'model' => 'Bank_Views_Receipt',
-                'method' => 'update',
-                'http-method' => array(
-                        'POST'
-                )
-        ),
-        array(
-                'regex' => '#^/receipt/(?P<secure_id>.+)$#',
-                'model' => 'Bank_Views_Receipt',
-                'method' => 'updateBySecureId',
-                'http-method' => array(
-                        'POST'
-                )
-        ),
-        array(
-                'regex' => '#^/receipt/(?P<id>.+)$#',
-                'model' => 'Bank_Views_Receipt',
-                'method' => 'delete',
-                'http-method' => array(
-                        'DELETE'
-                )
+        'precond' => array(
+            'Pluf_Precondition::ownerRequired'
         )
+    ),
+    array(
+        'regex' => '#^/receipt/new$#',
+        'model' => 'Bank_Views_Receipt',
+        'method' => 'create',
+        'http-method' => array(
+            'POST'
+        )
+    ),
+    array(
+        'regex' => '#^/receipt/(?P<id>\d+)$#',
+        'model' => 'Bank_Views_Receipt',
+        'method' => 'get',
+        'http-method' => array(
+            'GET'
+        ),
+        'precond' => array(
+            'Pluf_Precondition::ownerRequired'
+        )
+    ),
+    array(
+        'regex' => '#^/receipt/(?P<secure_id>.+)$#',
+        'model' => 'Bank_Views_Receipt',
+        'method' => 'getBySecureId',
+        'http-method' => array(
+            'GET'
+        )
+    ),
+    array(
+        'regex' => '#^/receipt/(?P<id>\d+)$#',
+        'model' => 'Bank_Views_Receipt',
+        'method' => 'update',
+        'http-method' => array(
+            'POST'
+        ),
+        'precond' => array(
+            'Pluf_Precondition::ownerRequired'
+        )
+    ),
+    array(
+        'regex' => '#^/receipt/(?P<secure_id>.+)$#',
+        'model' => 'Bank_Views_Receipt',
+        'method' => 'updateBySecureId',
+        'http-method' => array(
+            'POST'
+        )
+    ),
+    array(
+        'regex' => '#^/receipt/(?P<id>.+)$#',
+        'model' => 'Bank_Views_Receipt',
+        'method' => 'delete',
+        'http-method' => array(
+            'DELETE'
+        ),
+        'precond' => array(
+            'Pluf_Precondition::ownerRequired'
+        )
+    )
 );

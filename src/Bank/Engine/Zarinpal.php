@@ -16,19 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+use Zarinpal\Zarinpal;
 
 /**
- * 
+ *
  * @author maso<mostafa.barmshory@dpq.co.ir>
  *
  */
 class Bank_Engine_Zarinpal extends Bank_Engine
 {
-
+    
     const MerchantID = 'MerchantID';
-
+    
     var $client = false;
-
+    
     /*
      *
      */
@@ -36,7 +37,7 @@ class Bank_Engine_Zarinpal extends Bank_Engine
     {
         return 'Zarin Pal';
     }
-
+    
     /*
      *
      */
@@ -44,7 +45,7 @@ class Bank_Engine_Zarinpal extends Bank_Engine
     {
         return 'Zarin Pal Payment Service';
     }
-
+    
     /*
      *
      */
@@ -69,13 +70,13 @@ class Bank_Engine_Zarinpal extends Bank_Engine
                 )
         );
     }
-
+    
     /*
      */
     public function create ($receipt)
     {
         $backend = $receipt->get_backend();
-        $MerchantID = $backend->get(Bank_Engine_Zarinpal::MerchantID);
+        $MerchantID = $backend->getMeta(Bank_Engine_Zarinpal::MerchantID);
         $Authority = $receipt->getMeta('Authority', null);
         // Check
         Pluf_Assert::assertNull($Authority, 'Receipt is created before');
@@ -88,33 +89,27 @@ class Bank_Engine_Zarinpal extends Bank_Engine
             return;
         }
         
-        // maso, 1395: ایجاد یک پرداخت
-        $client = $this->getClient();
-        $result = $client->PaymentRequest(
-                [
-                        'MerchantID' => $MerchantID,
-                        'Amount' => $receipt->amount,
-                        'Description' => $receipt->description,
-                        'Email' => $receipt->email,
-                        'Mobile' => $receipt->phone,
-                        'CallbackURL' => $receipt->callbackURL
-                ]);
+        $gate = new Zarinpal($MerchantID);
+        $answer = $gate->request($receipt->callbackURL, $receipt->amount,
+                $receipt->description, $receipt->email, $receipt->phone);
+        
+        if (isset($answer['Authority'])) {
+            $receipt->setMeta('Authority', $answer['Authority']);
+            $receipt->callURL= 'https://www.zarinpal.com/pg/StartPay/' .
+                    $answer['Authority'];
+            return;
+        }
         
         // Redirect to URL You can do it also by creating a form
-        if ($result->Status != 100) {
-            throw new Bank_Exception_Engine('fail to create payment');
-        }
-        $receipt->putMeta('Authority', $result->Authority);
-        $receipt->callUrl = 'https://www.zarinpal.com/pg/StartPay/' .
-                 $result->Authority;
+        throw new Bank_Exception('fail to create payment: zarinpal server erro');
     }
-
+    
     /**
      */
     public function update ($receipt)
     {
         $backend = $receipt->get_backend();
-        $MerchantID = $backend->get(Bank_Engine_Zarinpal::MerchantID);
+        $MerchantID = $backend->getMeta(Bank_Engine_Zarinpal::MerchantID);
         $Authority = $receipt->getMeta('Authority', null);
         // Check
         Pluf_Assert::assertNotNull($Authority, 'Receipt is created before');
@@ -129,34 +124,15 @@ class Bank_Engine_Zarinpal extends Bank_Engine
         // maso, 1395: تایید یک پرداخت
         // $wsdlCheck = 'Location: https://sandbox.zarinpal.com/pg/StartPay/'
         // .$result->Authority
-        $client = $this->getClient();
-        $result = $client->PaymentVerification(
-                [
-                        'MerchantID' => $MerchantID,
-                        'Authority' => $Authority,
-                        'Amount' => $receipt->amount
-                ]);
-        if ($result->Status == 100) {
-            throw new Bank_Exception_Engine('fail to check payment');
+        // TODO: hadi-1396-06: followig MyRestDriver is temporary and will be removed
+        // It depends on https://github.com/ZarinPal-Lab/Composer-Library/pull/4
+        $client= new Zarinpal($MerchantID, new Bank_Engine_MyRestDriver());
+        $result = $client->verify('OK', $receipt->amount, $Authority);
+        if ($result['Status'] == 'success') {
+            $receipt->payRef = $result['RefID'];
+            return true;
         }
-        $receipt->payRef = $result->RefID;
-        return true;
+        return false;        
     }
-
-    private function getClient ()
-    {
-        if ($this->client) {
-            return $this->client;
-        }
-        $wsdl = 'https://sandbox.zarinpal.com/pg/services/WebGate/wsdl';
-        $this->client = new SoapClient($wsdl, 
-                array(
-                        'encoding' => 'UTF-8',
-                        'soap_version' => SOAP_1_1,
-                        'trace' => 0,
-                        'exceptions' => 1,
-                        'connection_timeout' => 180
-                ));
-        return $this->client;
-    }
+    
 }

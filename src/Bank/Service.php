@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Pluf Framework, a simple PHP Application Framework.
  * Copyright (C) 2010-2020 Phoinex Scholars Co. (http://dpq.co.ir)
@@ -19,9 +20,9 @@
 
 /**
  * سرویس پرداخت‌ها را برای ماژولهای داخلی سیستم ایجاد می کند.
- * 
- * @author maso<mostafa.barmshory@dpq.co.ir>
  *
+ * @author maso<mostafa.barmshory@dpq.co.ir>
+ *        
  */
 class Bank_Service
 {
@@ -62,21 +63,23 @@ class Bank_Service
      * در نهایت باید موجودیتی تعیین بشه که این پرداخت رو می‌خواهیم براش ایجاد
      * کنیم.
      *
-     * @param HTTP_REQUEST $request            
-     * @param array $receiptParam            
+     * @param array $param            
      * @param Pluf_Model $owner            
      * @return Bank_Receipt
      */
-    public static function create ($request, $param, $owner = null)
+    public static function create ($param, $owner = null, $ownerId = null)
     {
         $form = new Bank_Form_ReceiptNew($param);
         $receipt = $form->save(false);
         $backend = $receipt->get_backend();
         $engine = $backend->get_engine();
         $engine->create($receipt);
-        if (! is_null($owner)) {
+        if ($owner instanceof Pluf_Model) { // Pluf module
             $receipt->owner_class = $owner->getClass();
             $receipt->owner_id = $owner->getId();
+        } elseif (! is_null($owner)) { // module
+            $receipt->owner_class = $owner;
+            $receipt->owner_id = $ownerId;
         }
         $receipt->create();
         return $receipt;
@@ -100,6 +103,36 @@ class Bank_Service
             $receipt->update();
         }
         return $receipt;
+    }
+
+    /**
+     * Finds recepts
+     *
+     * @param Plfu_Model $owner            
+     * @param unknown $ownerId            
+     */
+    public static function find ($owner, $ownerId = null)
+    {
+        // get class
+        if ($owner instanceof Pluf_Model) { // Pluf module
+            $ownerClass = $owner->getClass();
+            $ownerId = $owner->getId();
+        } elseif (! is_null($owner)) { // module
+            $ownerClass = $owner;
+        }
+        
+        // get list
+        $receipt = new Bank_Receipt();
+        $q = new Pluf_SQL('owner_class=%s AND owner_id=%s', 
+                array(
+                        $ownerClass,
+                        $ownerId
+                ));
+        $list = $receipt->getList(
+                array(
+                        'filter' => $q->gen()
+                ));
+        return $list;
     }
 
     /**
