@@ -5,13 +5,14 @@
             <directory>./Service/</directory>
         </testsuite>
     </testsuites>
-    
-    <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">../src</directory>
-        </whitelist>
-    </filter>
-    <logging>
-        <log type="coverage-clover" target="./clover.xml"/>
-    </logging>
+
+	<!-- Code coverage -->
+	<filter>
+		<whitelist addUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">../src</directory>
+		</whitelist>
+	</filter>
+	<logging>
+		<log type="coverage-clover" target="./clover.xml" />
+	</logging>
 </phpunit>
