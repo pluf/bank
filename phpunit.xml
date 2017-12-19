@@ -2,14 +2,14 @@
 <phpunit colors="true">
     <testsuites>
         <testsuite name="pluf/bank">
-            <directory>./Service/</directory>
+            <directory>tests/Service/</directory>
         </testsuite>
     </testsuites>
 
 	<!-- Code coverage -->
 	<filter>
 		<whitelist addUncoveredFilesFromWhitelist="true">
-			<directory suffix=".php">../src</directory>
+			<directory suffix=".php">src</directory>
 		</whitelist>
 	</filter>
 	<logging>

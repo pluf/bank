@@ -70,7 +70,7 @@ return array(
             'POST'
         ),
         'precond' => array(
-            'Pluf_Precondition::ownerRequired'
+            'User_Precondition::ownerRequired'
         )
     ),
     array(
@@ -89,7 +89,7 @@ return array(
             'POST'
         ),
         'precond' => array(
-            'Pluf_Precondition::ownerRequired'
+            'User_Precondition::ownerRequired'
         )
     ),
     array(
@@ -100,7 +100,7 @@ return array(
             'DELETE'
         ),
         'precond' => array(
-            'Pluf_Precondition::ownerRequired'
+            'User_Precondition::ownerRequired'
         )
     ),
         
@@ -115,7 +115,7 @@ return array(
             'GET'
         ),
         'precond' => array(
-            'Pluf_Precondition::ownerRequired'
+            'User_Precondition::ownerRequired'
         )
     ),
     array(
@@ -134,7 +134,7 @@ return array(
             'GET'
         ),
         'precond' => array(
-            'Pluf_Precondition::loginRequired',
+            'User_Precondition::loginRequired',
             'Pluf_Precondition::authorizedRequired'
         )
     ),
@@ -154,7 +154,7 @@ return array(
             'POST'
         ),
         'precond' => array(
-            'Pluf_Precondition::ownerRequired'
+            'User_Precondition::ownerRequired'
         )
     ),
     array(
@@ -173,7 +173,7 @@ return array(
             'DELETE'
         ),
         'precond' => array(
-            'Pluf_Precondition::ownerRequired'
+            'User_Precondition::ownerRequired'
         )
     )
 );
