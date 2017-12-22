@@ -134,8 +134,7 @@ return array(
             'GET'
         ),
         'precond' => array(
-            'User_Precondition::loginRequired',
-            'Pluf_Precondition::authorizedRequired'
+            'User_Precondition::loginRequired'
         )
     ),
     array(
