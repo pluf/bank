@@ -29,8 +29,8 @@ class Bank_Views_Backend
     /**
      * فهرست تمام پشتوانه‌ها رو تعیین می‌کنه.
      *
-     * @param unknown $request            
-     * @param unknown $match            
+     * @param Pluf_HTTP_Request $request            
+     * @param array $match            
      */
     public function find ($request, $match)
     {
@@ -58,8 +58,8 @@ class Bank_Views_Backend
 
     /**
      *
-     * @param unknown $request            
-     * @param unknown $match            
+     * @param Pluf_HTTP_Request $request
+     * @param array $match
      */
     public function createParameter ($request, $match)
     {
@@ -74,8 +74,8 @@ class Bank_Views_Backend
     /**
      * یک نمونه جدید از متور پرداخت ایجاد می‌کند.
      *
-     * @param unknown $request            
-     * @param unknown $match            
+     * @param Pluf_HTTP_Request $request
+     * @param array $match
      */
     public function create ($request, $match)
     {
@@ -94,8 +94,8 @@ class Bank_Views_Backend
 
     /**
      *
-     * @param unknown $request            
-     * @param unknown $match            
+     * @param Pluf_HTTP_Request $request
+     * @param array $match
      */
     public function get ($request, $match)
     {
@@ -105,8 +105,8 @@ class Bank_Views_Backend
 
     /**
      *
-     * @param unknown $request            
-     * @param unknown $match            
+     * @param Pluf_HTTP_Request $request
+     * @param array $match
      */
     public function delete ($request, $match)
     {
@@ -117,8 +117,8 @@ class Bank_Views_Backend
 
     /**
      *
-     * @param unknown $request            
-     * @param unknown $match            
+     * @param Pluf_HTTP_Request $request
+     * @param array $match
      */
     public function update ($request, $match)
     {
