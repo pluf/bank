@@ -153,4 +153,11 @@ class Bank_Engine_MyRestDriver implements DriverInterface
     {
         $this->baseUrl = $baseUrl;
     }
+    
+    /**
+     * activate sandbox mod for dev environment.
+     */
+    public function enableSandbox(){
+        return false;
+    }
 }
