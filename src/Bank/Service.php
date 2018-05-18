@@ -63,11 +63,11 @@ class Bank_Service
      * در نهایت باید موجودیتی تعیین بشه که این پرداخت رو می‌خواهیم براش ایجاد
      * کنیم.
      *
-     * @param array $param            
-     * @param Pluf_Model $owner            
+     * @param array $param
+     * @param Pluf_Model $owner
      * @return Bank_Receipt
      */
-    public static function create ($param, $owner = null, $ownerId = null)
+    public static function create($param, $owner = null, $ownerId = null)
     {
         $form = new Bank_Form_ReceiptNew($param);
         $receipt = $form->save(false);
@@ -92,10 +92,10 @@ class Bank_Service
      * سمت بانک انجام شده است. این فراخوانی این بررسی رو انجام می‌ده و حالت
      * پرداخت رو به روز می‌کنه.
      *
-     * @param Bank_Receipt $receipt            
+     * @param Bank_Receipt $receipt
      * @return Bank_Receipt
      */
-    public static function update ($receipt)
+    public static function update($receipt)
     {
         $backend = $receipt->get_backend();
         $engine = $backend->get_engine();
@@ -108,10 +108,10 @@ class Bank_Service
     /**
      * Finds recepts
      *
-     * @param Plfu_Model $owner            
-     * @param unknown $ownerId            
+     * @param Plfu_Model $owner
+     * @param unknown $ownerId
      */
-    public static function find ($owner, $ownerId = null)
+    public static function find($owner, $ownerId = null)
     {
         // get class
         if ($owner instanceof Pluf_Model) { // Pluf module
@@ -123,15 +123,13 @@ class Bank_Service
         
         // get list
         $receipt = new Bank_Receipt();
-        $q = new Pluf_SQL('owner_class=%s AND owner_id=%s', 
-                array(
-                        $ownerClass,
-                        $ownerId
-                ));
-        $list = $receipt->getList(
-                array(
-                        'filter' => $q->gen()
-                ));
+        $q = new Pluf_SQL('owner_class=%s AND owner_id=%s', array(
+            $ownerClass,
+            $ownerId
+        ));
+        $list = $receipt->getList(array(
+            'filter' => $q->gen()
+        ));
         return $list;
     }
 
@@ -140,11 +138,13 @@ class Bank_Service
      *
      * @return Bank_Engine_Mellat[]|Bank_Engine_Zarinpal[]
      */
-    public static function engines ()
+    public static function engines()
     {
         return array(
-                new Bank_Engine_Mellat(),
-                new Bank_Engine_Zarinpal()
+            new Bank_Engine_Mellat(),
+            new Bank_Engine_Zarinpal(),
+            
+            new Bank_Engine_PayPall()
         );
     }
 }
