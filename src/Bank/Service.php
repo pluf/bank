@@ -144,7 +144,8 @@ class Bank_Service
             new Bank_Engine_Mellat(),
             new Bank_Engine_Zarinpal(),
             
-            new Bank_Engine_PayPall()
+            new Bank_Engine_PayPall(),
+            new Bank_Engine_BitPay()
         );
     }
 }
