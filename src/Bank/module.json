@@ -6,5 +6,17 @@
 		"Bank_Receipt",
 		"Bank_Backend"
 	],
-	"permisson": []
+	"init": {
+		"Role": [],
+		"Monitor_Property": [
+			{
+				"monitor":"receipt",
+				"name": "paid_amount",
+				"title": "Total paid ammount",
+				"description": "Total amount of paid receipts.",
+				"function": "Bank_Monitor::paidAmount",
+				"cacheable": false
+			}
+		]
+	}
 }
