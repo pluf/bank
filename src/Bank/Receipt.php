@@ -151,8 +151,8 @@ class Bank_Receipt extends Pluf_Model
      * در زمان ایجاد باید تعیین شوند. از این جمله می‌توان به کاربر و تاریخ اشاره
      * کرد.
      *
-     * @param $create حالت
-     *            ساخت یا به روز رسانی را تعیین می‌کند
+     * @param $create boolean
+     *            if is true then the new object will be created
      */
     function preSave ($create = false)
     {

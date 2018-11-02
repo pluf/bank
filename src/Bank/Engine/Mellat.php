@@ -38,6 +38,14 @@ class Bank_Engine_Mellat extends Bank_Engine {
 		return 'Mellat Payment Service';
 	}
 	
+	/*
+	 * 
+	 */
+	public function getExtraParam ()
+	{
+	    return array();
+	}
+	
 	/**
 	 */
 	public function create($receipt) {
