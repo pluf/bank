@@ -56,4 +56,25 @@ if (! defined('PHPUNIT_COMPOSER_INSTALL')) {
                      PHP_EOL . 'php composer.phar install' . PHP_EOL);
 }
 
+
+// clean test data
+function deleteDir($path)
+{
+    return ! empty($path) &&
+    is_file($path) ? @unlink($path) : (
+        array_reduce(glob($path . '/*'), function ($r, $i) {
+            return $r && deleteDir($i);
+        }, TRUE)
+        ) && @rmdir($path);
+}
+$tmp_path = 'tests/tmp';
+deleteDir($tmp_path);
+if (!mkdir($tmp_path, 0777, true)) {
+    die('Failed to create temp folder...');
+}
+// Run test
 PHPUnit_TextUI_Command::main();
+
+// delete test path
+deleteDir($tmp_path);
+
