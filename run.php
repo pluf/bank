@@ -75,6 +75,4 @@ if (!mkdir($tmp_path, 0777, true)) {
 // Run test
 PHPUnit_TextUI_Command::main();
 
-// delete test path
-deleteDir($tmp_path);
 
