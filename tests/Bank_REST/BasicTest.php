@@ -87,7 +87,7 @@ class Bank_REST_BasicTest extends TestCase {
 	 * @test
 	 */
 	public function shouldAnonymousGetListOfEngines() {
-		$response = self::$client->get ( '/bank/engine/find' );
+		$response = self::$client->get ( '/bank/engines' );
 		Test_Assert::assertResponseNotNull ( $response, 'Find result is empty' );
 		Test_Assert::assertResponseStatusCode ( $response, 200, 'Find status code is not 200' );
 		Test_Assert::assertResponsePaginateList ( $response, 'Find result is not JSON paginated list' );
@@ -101,7 +101,7 @@ class Bank_REST_BasicTest extends TestCase {
 	public function shouldAnonymousGetAnEngine() {
 		$engs = Bank_Service::engines ();
 		foreach ( $engs as $eng ) {
-			$response = self::$client->get ( '/bank/engine/' . $eng->getType () );
+			$response = self::$client->get ( '/bank/engines/' . $eng->getType () );
 			Test_Assert::assertResponseNotNull ( $response, 'Find result is empty' );
 			Test_Assert::assertResponseStatusCode ( $response, 200, 'Find status code is not 200' );
 		}
@@ -113,7 +113,7 @@ class Bank_REST_BasicTest extends TestCase {
 	 * @test
 	 */
 	public function shouldAnonymousGetListOfBackend() {
-		$response = self::$client->get ( '/bank/backend/find' );
+		$response = self::$client->get ( '/bank/backends' );
 		Test_Assert::assertResponseNotNull ( $response, 'Find result is empty' );
 		Test_Assert::assertResponseStatusCode ( $response, 200, 'Find status code is not 200' );
 		Test_Assert::assertResponsePaginateList ( $response, 'Find result is not JSON paginated list' );

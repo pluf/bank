@@ -95,7 +95,7 @@ class Bank_REST_BackendTest extends TestCase {
 		Test_Assert::assertResponseStatusCode ( $response, 200, 'Fail to login' );
 
 		// Create a backend
-		$response = self::$client->post ( '/bank/backend/new', array (
+		$response = self::$client->post ( '/bank/backends', array (
 				'type' => 'zarinpal',
 				'MerchantID' => 'xxx',
 				'title' => 'title',
