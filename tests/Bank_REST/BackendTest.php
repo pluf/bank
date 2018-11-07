@@ -20,119 +20,96 @@ use PHPUnit\Framework\TestCase;
 require_once 'Pluf.php';
 
 /**
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
  */
-class Bank_REST_BackendTest extends TestCase
-{
+class Bank_REST_BackendTest extends TestCase {
+	private static $client = null;
 
-    private static $client = null;
+	/**
+	 *
+	 * @beforeClass
+	 */
+	public static function createDataBase() {
+		Pluf::start ( __DIR__ . '/../conf/config.php' );
+		$m = new Pluf_Migration ( Pluf::f ( 'installed_apps', array () ) );
+		$m->install ();
 
-    private static $user = null;
+		// Test user
+		$user = new User_Account ();
+		$user->login = 'test';
+		$user->is_active = true;
+		if (true !== $user->create ()) {
+			throw new Exception ();
+		}
+		// Credential of user
+		$credit = new User_Credential ();
+		$credit->setFromFormData ( array (
+				'account_id' => $user->id
+		) );
+		$credit->setPassword ( 'test' );
+		if (true !== $credit->create ()) {
+			throw new Exception ();
+		}
 
-    /**
-     * @beforeClass
-     */
-    public static function createDataBase()
-    {
-        Pluf::start(__DIR__ . '/../conf/mysql.conf.php');
-        $m = new Pluf_Migration(array(
-            'Pluf',
-            'User',
-            'Role',
-            'Group',
-            'Bank'
-        ));
-        $m->install();
-        // Test user
-        self::$user = new User();
-        self::$user->login = 'test';
-        self::$user->first_name = 'test';
-        self::$user->last_name = 'test';
-        self::$user->email = 'toto@example.com';
-        self::$user->setPassword('test');
-        self::$user->active = true;
-        self::$user->administrator = true;
-        if (true !== self::$user->create()) {
-            throw new Pluf_Exception();
-        }
-        
-        $role = Role::getFromString('Pluf.owner');
-        self::$user->setAssoc($role);
-        
-        self::$client = new Test_Client(array(
-            array(
-                'app' => 'Bank',
-                'regex' => '#^/api/bank#',
-                'base' => '',
-                'sub' => include 'Bank/urls.php'
-            ),
-            array(
-                'app' => 'User',
-                'regex' => '#^/api/user#',
-                'base' => '',
-                'sub' => include 'User/urls.php'
-            ),
-            array(
-                'app' => 'Role',
-                'regex' => '#^/api/role#',
-                'base' => '',
-                'sub' => include 'Role/urls.php'
-            ),
-            array(
-                'app' => 'Group',
-                'regex' => '#^/api/group#',
-                'base' => '',
-                'sub' => include 'Group/urls.php'
-            )
-        ));
-    }
+		$per = User_Role::getFromString ( 'tenant.owner' );
+		$user->setAssoc ( $per );
 
-    /**
-     * @afterClass
-     */
-    public static function removeDatabses()
-    {
-        $m = new Pluf_Migration(array(
-            'Pluf',
-            'User',
-            'Role',
-            'Group',
-            'Bank'
-        ));
-        $m->unInstall();
-    }
+		self::$client = new Test_Client ( array (
+				array (
+						'app' => 'Bank',
+						'regex' => '#^/bank#',
+						'base' => '',
+						'sub' => include 'Bank/urls.php'
+				),
+				array (
+						'app' => 'User',
+						'regex' => '#^/user#',
+						'base' => '',
+						'sub' => include 'User/urls.php'
+				)
+		) );
+	}
 
-    /**
-     * Geting list of engines
-     *
-     * @test
-     */
-    public function shouldOwnerCanCreateBackend()
-    {
-        // Login
-        $response = self::$client->post('/api/user/login', array(
-            'login' => 'test',
-            'password' => 'test'
-        ));
-        Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
-        
-        // Create a backend
-        $response = self::$client->post('/api/bank/backend/new', array(
-            'type' => 'zarinpal',
-            'MerchantID' => 'xxx',
-            'title' => 'title',
-            'description' => 'Description',
-            'symbol' => 'Symbole'
-        ));
-        Test_Assert::assertResponseNotNull($response, 'Find result is empty');
-        Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
-        
-        $backend = new Bank_Backend();
-        $list = $backend->getList();
-        Test_Assert::assertTrue(sizeof($list) >= 1, 'No backend is created');
-        foreach ($list as $b) {
-            $b->delete();
-        }
-    }
+	/**
+	 *
+	 * @afterClass
+	 */
+	public static function removeDatabses() {
+		$m = new Pluf_Migration ( Pluf::f ( 'installed_apps' ) );
+		$m->unInstall ();
+	}
+
+	/**
+	 * Geting list of engines
+	 *
+	 * @test
+	 */
+	public function shouldOwnerCanCreateBackend() {
+		// Login
+		$response = self::$client->post ( '/user/login', array (
+				'login' => 'test',
+				'password' => 'test'
+		) );
+		Test_Assert::assertResponseStatusCode ( $response, 200, 'Fail to login' );
+
+		// Create a backend
+		$response = self::$client->post ( '/bank/backend/new', array (
+				'type' => 'zarinpal',
+				'MerchantID' => 'xxx',
+				'title' => 'title',
+				'description' => 'Description',
+				'symbol' => 'Symbole'
+		) );
+		Test_Assert::assertResponseNotNull ( $response, 'Find result is empty' );
+		Test_Assert::assertResponseStatusCode ( $response, 200, 'Find status code is not 200' );
+
+		$backend = new Bank_Backend ();
+		$list = $backend->getList ();
+		Test_Assert::assertTrue ( sizeof ( $list ) >= 1, 'No backend is created' );
+		foreach ( $list as $b ) {
+			$b->delete ();
+		}
+	}
 }

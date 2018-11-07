@@ -34,45 +34,9 @@ class ServiceEngineTest extends TestCase
      */
     public static function createDataBase()
     {
-        Pluf::start(array(
-            'test' => false,
-            'timezone' => 'Europe/Berlin',
-            'debug' => true,
-            'installed_apps' => array(
-                'Pluf'
-            ),
-            'tmp_folder' => dirname(__FILE__) . '/../tmp',
-            'templates_folder' => array(
-                dirname(__FILE__) . '/../templates'
-            ),
-            'pluf_use_rowpermission' => true,
-            'mimetype' => 'text/html',
-            'app_views' => dirname(__FILE__) . '/views.php',
-            'db_login' => 'testpluf',
-            'db_password' => 'testpluf',
-            'db_server' => 'localhost',
-            'db_database' => dirname(__FILE__) . '/../tmp/tmp.sqlite.db',
-            'app_base' => '/testapp',
-            'url_format' => 'simple',
-            'db_table_prefix' => 'bank_unit_tests_',
-            'db_version' => '5.0',
-            'db_engine' => 'SQLite',
-            'bank_debug' => true
-        ));
-
-        $db = Pluf::db();
-        $schema = Pluf::factory('Pluf_DB_Schema', $db);
-        $models = array(
-            'Bank_Backend',
-            'Bank_Receipt'
-        );
-        foreach ($models as $model) {
-            $schema->model = Pluf::factory($model);
-            $schema->dropTables();
-            if (true !== ($res = $schema->createTables())) {
-                throw new Exception($res);
-            }
-        }
+        Pluf::start(__DIR__ . '/../conf/config.php');
+        $m = new Pluf_Migration(Pluf::f('installed_apps', array()));
+        $m->install();
     }
 
     /**
@@ -81,16 +45,8 @@ class ServiceEngineTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $db = Pluf::db();
-        $schema = Pluf::factory('Pluf_DB_Schema', $db);
-        $models = array(
-            'Bank_Backend',
-            'Bank_Receipt'
-        );
-        foreach ($models as $model) {
-            $schema->model = Pluf::factory($model);
-            $schema->dropTables();
-        }
+        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m->unInstall();
     }
 
     /**
