@@ -72,7 +72,7 @@ class Bank_Engine implements JsonSerializable
     }
 
     /**
-     * یک پرداخت جدید در بانک ایجاد می‌کند
+     * Creates a new transaction 
      *
      * اطلاعات ایجاد شده برای پرداخت می‌تواند در متا قرار گیرد. و تمام اطلاعات
      * مورد نیاز باید ار تقاضا به دست آید.
@@ -87,7 +87,7 @@ class Bank_Engine implements JsonSerializable
      *
      * بعد از این روال ورودی ذخیره خواهد شد.
      *
-     * @param unknown $receipt            
+     * @param Bank_Receipt $receipt            
      */
     public function create ($receipt)
     {
@@ -109,7 +109,7 @@ class Bank_Engine implements JsonSerializable
      * بعد از این فراخوانی داده‌ها باز ذخیره سازی می‌شود اگر و تنها اگر پرداخت
      * انجام شده باشد.
      *
-     * @param unknown $receipt            
+     * @param Bank_Receipt $receipt            
      */
     public function update ($receipt)
     {

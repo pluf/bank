@@ -1,7 +1,8 @@
 <?php
+
 /*
  * This file is part of Pluf Framework, a simple PHP Application Framework.
- * Copyright (C) 2010-2020 Phoinex Scholars Co. (http://dpq.co.ir)
+ * Copyright (C) 2010-2020 Phoinex Scholars Co. http://dpq.co.ir
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,45 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+$cfg = array();
 
-/**
- * 
- * @author maso<mostafa.barmshory@dpq.co.ir>
- *
- */
-class Bank_Engine_Mellat extends Bank_Engine {
-	
-	/*
-	 *
-	 */
-	public function getTitle() {
-		return 'Mellat';
-	}
-	
-	/*
-	 *
-	 */
-	public function getDescription() {
-		return 'Mellat Payment Service';
-	}
-	
-	/*
-	 * 
-	 */
-	public function getExtraParam ()
-	{
-	    return array();
-	}
-	
-	/**
-	 */
-	public function create($receipt) {
-		// XXX: maso, 1395: ایجاد یک پرداخت
-	}
-	
-	/**
-	 */
-	public function update($receipt) {
-		// XXX: maso, 1395: ایجاد یک پرداخت
-	}
-}
+// Default database configuration. The database defined here will be
+// directly accessible from Pluf::db() of course it is still possible
+// to open any other number of database connections through Pluf_DB
+$cfg['db_login'] = 'root';
+$cfg['db_password'] = '';
+$cfg['db_server'] = 'localhost';
+$cfg['db_database'] = dirname(__FILE__) . '/../tmp/test.sqlite.db';
+
+// Starting version 4.1 of MySQL the utf-8 support is "correct".
+// The reason of the db_version for MySQL is only for that.
+$cfg['db_version'] = '5.0';
+$cfg['db_engine'] = 'SQLite';
+
+return $cfg;
+
