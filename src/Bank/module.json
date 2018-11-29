@@ -7,15 +7,27 @@
 		"Bank_Backend"
 	],
 	"init": {
-		"Role": [],
-		"Monitor_Property": [
+		"Monitor_Tag": [
 			{
-				"monitor":"receipt",
+				"name": "receipt",
+				"description": "Tag for monitors on receipt metrics"
+			}
+		],
+		"Monitor_Metric": [
+			{
 				"name": "paid_amount",
 				"title": "Total paid ammount",
 				"description": "Total amount of paid receipts.",
 				"function": "Bank_Monitor::paidAmount",
 				"cacheable": false
+			}
+		]
+	},
+	"init_assoc": {
+		"Monitor_Tag|Monitor_Metric": [
+			{
+				"from": "name='receipt'",
+				"to": "name='paid_amount'"
 			}
 		]
 	}
