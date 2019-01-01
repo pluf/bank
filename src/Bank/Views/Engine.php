@@ -59,7 +59,7 @@ class Bank_Views_Engine
      */
     public function get ($request, $match)
     {
-        return new Pluf_HTTP_Response_Json(
-                Bank_Shortcuts_GetEngineOr404($match['type']));
+        $engine = Bank_Shortcuts_GetEngineOr404($match['type']);
+        return $engine->getParameters();
     }
 }

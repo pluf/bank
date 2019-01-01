@@ -56,20 +56,20 @@ class Bank_Views_Backend
         return new Pluf_HTTP_Response_Json($pag->render_object());
     }
 
-    /**
-     *
-     * @param Pluf_HTTP_Request $request
-     * @param array $match
-     */
-    public function createParameter ($request, $match)
-    {
-        $type = 'not set';
-        if (array_key_exists('type', $request->REQUEST)) {
-            $type = $request->REQUEST['type'];
-        }
-        $engine = Bank_Shortcuts_GetEngineOr404($type);
-        return new Pluf_HTTP_Response_Json($engine->getParameters());
-    }
+//     /**
+//      *
+//      * @param Pluf_HTTP_Request $request
+//      * @param array $match
+//      */
+//     public function createParameter ($request, $match)
+//     {
+//         $type = 'not set';
+//         if (array_key_exists('type', $request->REQUEST)) {
+//             $type = $request->REQUEST['type'];
+//         }
+//         $engine = Bank_Shortcuts_GetEngineOr404($type);
+//         return new Pluf_HTTP_Response_Json($engine->getParameters());
+//     }
 
     /**
      * یک نمونه جدید از متور پرداخت ایجاد می‌کند.
