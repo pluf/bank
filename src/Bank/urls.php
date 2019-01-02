@@ -51,14 +51,14 @@ return array (
             'GET'
         )
     ),
-    array(
-        'regex' => '#^/backends$#',
-        'model' => 'Bank_Views_Backend',
-        'method' => 'createParameter',
-        'http-method' => array(
-            'GET'
-        )
-    ),
+//     array(
+//         'regex' => '#^/backends/parameters$#',
+//         'model' => 'Bank_Views_Backend',
+//         'method' => 'createParameter',
+//         'http-method' => array(
+//             'GET'
+//         )
+//     ),
     array(
         'regex' => '#^/backends$#',
         'model' => 'Bank_Views_Backend',

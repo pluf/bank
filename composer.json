@@ -24,7 +24,7 @@
 		"pluf/core" : "^4.0.0",
 		"pluf/user" : "^4.0.0",
 		"zarinpal/zarinpal" : "^1.1.0",
-		"paypal/rest-api-sdk-php": "^1.13"
+		"paypal/rest-api-sdk-php" : "^1.13"
 	},
 	"require-dev" : {
 		"pluf/test" : "^4.0.0"
