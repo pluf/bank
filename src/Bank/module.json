@@ -4,7 +4,9 @@
 	"title": "Bank framework",
 	"model": [
 		"Bank_Receipt",
-		"Bank_Backend"
+		"Bank_Backend",
+		"Bank_Wallet",
+		"Bank_Transfer"
 	],
 	"init": {
 		"Monitor_Tag": [
