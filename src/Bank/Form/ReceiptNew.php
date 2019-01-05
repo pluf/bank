@@ -33,7 +33,7 @@ class Bank_Form_ReceiptNew extends Pluf_Form
         $this->fields['amount'] = new Pluf_Form_Field_Integer(
                 array(
                         'required' => true,
-                        'label' => 'amtoun'
+                        'label' => 'amount'
                 ));
         
         $this->fields['title'] = new Pluf_Form_Field_Varchar(
