@@ -98,7 +98,7 @@ class Bank_Wallet extends Pluf_Model
 
         $this->_a['idx'] = array(
             'wallet_owner_idx' => array(
-                'col' => 'owner',
+                'col' => 'owner_id',
                 'type' => 'normal', // normal, unique, fulltext, spatial
                 'index_type' => '', // hash, btree
                 'index_option' => '',
