@@ -50,18 +50,18 @@ class Bank_Receipt extends Pluf_Model
     function init()
     {
         $this->_a['table'] = 'bank_receipt';
-        $this->_a['cols'] = array (
-				/*
-				 * داده‌های عمومی برای یک پرداخت
-				 */
-				'id' => array(
+        $this->_a['cols'] = array(
+            'id' => array(
                 'type' => 'Pluf_DB_Field_Sequence',
-                'blank' => true
+                'blank' => true,
+                'editable' => false,
+                'readable' => true
             ),
             'secure_id' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => false,
-                'size' => 64
+                'size' => 64,
+                'readable' => false
             ),
             'amount' => array(
                 'type' => 'Pluf_DB_Field_Integer',
@@ -98,17 +98,20 @@ class Bank_Receipt extends Pluf_Model
             'payRef' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => true,
-                'size' => 200
+                'size' => 200,
+                'readable' => true
             ),
             // مسیری رو تعیین می‌کنه که برای تکمیل خرید باید دنبال کنیم
             'callURL' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => true,
-                'size' => 200
+                'size' => 200,
+                'readable' => false
             ),
             'payMeta' => array(
                 'type' => 'Pluf_DB_Field_Text',
-                'blank' => false
+                'blank' => false,
+                'readable' => false
             ),
             'backend' => array(
                 'type' => 'Pluf_DB_Field_Foreignkey',
