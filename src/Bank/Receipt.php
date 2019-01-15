@@ -113,16 +113,10 @@ class Bank_Receipt extends Pluf_Model
                 'blank' => false,
                 'readable' => false
             ),
-            'backend' => array(
-                'type' => 'Pluf_DB_Field_Foreignkey',
-                'model' => 'Bank_Backend',
-                'blank' => false,
-                'relate_name' => 'backend'
-            ),
-			/*
-			 * مالک این پرداخت را تعیین می‌کند. این مالک می‌تواند هر موجودیتی در
-			 * سیستم باشد.
-			 */
+            /*
+             * مالک این پرداخت را تعیین می‌کند. این مالک می‌تواند هر موجودیتی در
+             * سیستم باشد.
+             */
             'owner_id' => array(
                 'type' => 'Pluf_DB_Field_Integer',
                 'blank' => false,
@@ -133,7 +127,6 @@ class Bank_Receipt extends Pluf_Model
                 'blank' => false,
                 'size' => 50
             ),
-
             'creation_dtime' => array(
                 'type' => 'Pluf_DB_Field_Datetime',
                 'blank' => true,
@@ -143,9 +136,21 @@ class Bank_Receipt extends Pluf_Model
                 'type' => 'Pluf_DB_Field_Datetime',
                 'blank' => true,
                 'verbose' => 'modification date'
+            ),
+            /*
+             * Relations
+             */
+            'backend_id' => array(
+                'type' => 'Pluf_DB_Field_Foreignkey',
+                'model' => 'Bank_Backend',
+                'blank' => false,
+                'is_null' => false,
+                'name' => 'backend',
+                'graphql_name' => 'backend',
+                'relate_name' => 'receipts'
             )
         );
-        $this->_a['views'] = array();
+//         $this->_a['views'] = array();
     }
 
     /**

@@ -71,7 +71,7 @@ class ServiceCreateTest extends TestCase
             'email' => 'user@email.address',
             'phone' => '0917222222',
             'callbackURL' => 'http://.....',
-            'backend' => $backend->id
+            'backend_id' => $backend->id
         ));
         $this->assertNotNull($res);
     }
@@ -100,7 +100,7 @@ class ServiceCreateTest extends TestCase
             'email' => 'user@email.address',
             'phone' => '0917222222',
             'callbackURL' => 'http://.....',
-            'backend' => $backend->id
+            'backend_id' => $backend->id
         ), $object);
         $this->assertNotNull($res);
         $this->assertEquals($backend->getClass(), $res->owner_class);
@@ -132,7 +132,7 @@ class ServiceCreateTest extends TestCase
             'email' => 'user@email.address',
             'phone' => '0917222222',
             'callbackURL' => 'http://.....',
-            'backend' => $backend->id
+            'backend_id' => $backend->id
         ), $ownerClass, $ownerId);
         $this->assertNotNull($res);
         $this->assertEquals($ownerClass, $res->owner_class);

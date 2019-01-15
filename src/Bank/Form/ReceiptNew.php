@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Pluf Framework, a simple PHP Application Framework.
  * Copyright (C) 2010-2020 Phoinex Scholars Co. (http://dpq.co.ir)
@@ -18,7 +19,7 @@
  */
 
 /**
- * 
+ *
  * @author maso <mostafa.barmshory@dpq.co.ir>
  *        
  */
@@ -28,52 +29,44 @@ class Bank_Form_ReceiptNew extends Pluf_Form
     /*
      *
      */
-    public function initFields ($extra = array())
+    public function initFields($extra = array())
     {
-        $this->fields['amount'] = new Pluf_Form_Field_Integer(
-                array(
-                        'required' => true,
-                        'label' => 'amount'
-                ));
-        
-        $this->fields['title'] = new Pluf_Form_Field_Varchar(
-                array(
-                        'required' => true,
-                        'label' => 'title'
-                ));
-        
-        $this->fields['description'] = new Pluf_Form_Field_Varchar(
-                array(
-                        'required' => true,
-                        'label' => 'description'
-                ));
-        
-        $this->fields['email'] = new Pluf_Form_Field_Varchar(
-                array(
-                        'required' => false,
-                        'label' => 'email'
-                ));
-        $this->fields['phone'] = new Pluf_Form_Field_Varchar(
-                array(
-                        'required' => false,
-                        'label' => 'phone'
-                ));
-        $this->fields['callbackURL'] = new Pluf_Form_Field_Varchar(
-                array(
-                        'required' => true,
-                        'label' => 'callbackURL'
-                ));
-        $this->fields['backend'] = new Pluf_Form_Field_Integer(
-                array(
-                        'required' => true,
-                        'label' => 'backend'
-                ));
+        $this->fields['amount'] = new Pluf_Form_Field_Integer(array(
+            'required' => true,
+            'label' => 'amount'
+        ));
+
+        $this->fields['title'] = new Pluf_Form_Field_Varchar(array(
+            'required' => true,
+            'label' => 'title'
+        ));
+
+        $this->fields['description'] = new Pluf_Form_Field_Varchar(array(
+            'required' => true,
+            'label' => 'description'
+        ));
+
+        $this->fields['email'] = new Pluf_Form_Field_Varchar(array(
+            'required' => false,
+            'label' => 'email'
+        ));
+        $this->fields['phone'] = new Pluf_Form_Field_Varchar(array(
+            'required' => false,
+            'label' => 'phone'
+        ));
+        $this->fields['callbackURL'] = new Pluf_Form_Field_Varchar(array(
+            'required' => true,
+            'label' => 'callbackURL'
+        ));
+        $this->fields['backend_id'] = new Pluf_Form_Field_Integer(array(
+            'required' => true,
+            'label' => 'backend_id'
+        ));
     }
 
-    function clean_backend ()
+    function clean_backend()
     {
-        $backend = Pluf::factory('Bank_Backend', 
-                $this->cleaned_data['backend']);
+        $backend = Pluf::factory('Bank_Backend', $this->cleaned_data['backend']);
         if ($backend->isAnonymous()) {
             throw new Pluf_Exception('backend not found');
         }
@@ -83,16 +76,15 @@ class Bank_Form_ReceiptNew extends Pluf_Form
 
     /**
      *
-     * @param string $commit            
+     * @param string $commit
      * @throws Pluf_Exception
      * @return Bank_Backend
      */
-    function save ($commit = true)
+    function save($commit = true)
     {
         if (! $this->isValid()) {
             // TODO: maso, 1395: باید از خطای مدل فرم استفاده شود.
-            throw new Pluf_Exception(
-                    'Cannot save a receipt from an invalid form.');
+            throw new Pluf_Exception('Cannot save a receipt from an invalid form.');
         }
         // Set attributes
         $receipt = new Bank_Receipt();
@@ -112,16 +104,14 @@ class Bank_Form_ReceiptNew extends Pluf_Form
      *
      * @return unknown
      */
-    private function getSecureKey ()
+    private function getSecureKey()
     {
         $recipt = new Bank_Receipt();
         while (1) {
-            $key = sha1(
-                    microtime() . rand(0, 123456789) . Pluf::f('secret_key'));
-            $sess = $recipt->getList(
-                    array(
-                            'filter' => 'secure_id=\'' . $key . '\''
-                    ));
+            $key = sha1(microtime() . rand(0, 123456789) . Pluf::f('secret_key'));
+            $sess = $recipt->getList(array(
+                'filter' => 'secure_id=\'' . $key . '\''
+            ));
             if (count($sess) == 0) {
                 break;
             }

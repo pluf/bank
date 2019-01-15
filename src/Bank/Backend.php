@@ -26,6 +26,7 @@ class Bank_Backend extends Pluf_Model
     public $touched = false;
 
     /**
+     *
      * @brief مدل داده‌ای را بارگذاری می‌کند.
      *
      * تمام فیلدهای مورد نیاز برای این مدل داده‌ای در این متد تعیین شده و به
@@ -33,77 +34,77 @@ class Bank_Backend extends Pluf_Model
      *
      * @see Pluf_Model::init()
      */
-    function init ()
+    function init()
     {
         $this->_a['table'] = 'bank_backend';
         $this->_a['cols'] = array(
-                'id' => array(
-                        'type' => 'Pluf_DB_Field_Sequence',
-                        'blank' => true,
-                        'verbose' => 'unique and no repreducable id fro reception'
-                ),
-                'title' => array(
-                        'type' => 'Pluf_DB_Field_Varchar',
-                        'blank' => false,
-                        'size' => 50
-                ),
-                'description' => array(
-                        'type' => 'Pluf_DB_Field_Varchar',
-                        'blank' => true,
-                        'size' => 200
-                ),
-                'symbol' => array(
-                        'type' => 'Pluf_DB_Field_Varchar',
-                        'blank' => false,
-                        'size' => 50
-                ),
-                'home' => array(
-                        'type' => 'Pluf_DB_Field_Varchar',
-                        'blank' => true,
-                        'size' => 50
-                ),
-                'redirect' => array(
-                        'type' => 'Pluf_DB_Field_Varchar',
-                        'blank' => false,
-                        'size' => 50,
-                        'secure' => true
-                ),
-                'meta' => array(
-                        'type' => 'Pluf_DB_Field_Varchar',
-                        'blank' => false,
-                        'secure' => true,
-                        'size' => 3000,
-                        'editable' => false,
-                        'readable' => false
-                ),
-                'engine' => array(
-                        'type' => 'Pluf_DB_Field_Varchar',
-                        'blank' => false,
-                        'size' => 50
-                ),
-                
-                'creation_dtime' => array(
-                        'type' => 'Pluf_DB_Field_Datetime',
-                        'blank' => true,
-                        'verbose' => 'creation date'
-                ),
-                'modif_dtime' => array(
-                        'type' => 'Pluf_DB_Field_Datetime',
-                        'blank' => true,
-                        'verbose' => 'modification date'
-                )
+            'id' => array(
+                'type' => 'Pluf_DB_Field_Sequence',
+                'blank' => true,
+                'verbose' => 'unique and no repreducable id fro reception'
+            ),
+            'title' => array(
+                'type' => 'Pluf_DB_Field_Varchar',
+                'blank' => false,
+                'size' => 50
+            ),
+            'description' => array(
+                'type' => 'Pluf_DB_Field_Varchar',
+                'blank' => true,
+                'size' => 200
+            ),
+            'symbol' => array(
+                'type' => 'Pluf_DB_Field_Varchar',
+                'blank' => false,
+                'size' => 50
+            ),
+            'home' => array(
+                'type' => 'Pluf_DB_Field_Varchar',
+                'blank' => true,
+                'size' => 50
+            ),
+            'redirect' => array(
+                'type' => 'Pluf_DB_Field_Varchar',
+                'blank' => false,
+                'size' => 50,
+                'secure' => true
+            ),
+            'meta' => array(
+                'type' => 'Pluf_DB_Field_Varchar',
+                'blank' => false,
+                'secure' => true,
+                'size' => 3000,
+                'editable' => false,
+                'readable' => false
+            ),
+            'engine' => array(
+                'type' => 'Pluf_DB_Field_Varchar',
+                'blank' => false,
+                'size' => 50
+            ),
+
+            'creation_dtime' => array(
+                'type' => 'Pluf_DB_Field_Datetime',
+                'blank' => true,
+                'verbose' => 'creation date'
+            ),
+            'modif_dtime' => array(
+                'type' => 'Pluf_DB_Field_Datetime',
+                'blank' => true,
+                'verbose' => 'modification date'
+            )
         );
         $this->_a['views'] = array(
-                'global' => array(
-                        'select' => $this->getGlobalSelect()
-                )
+            'global' => array(
+                'select' => $this->getGlobalSelect()
+            )
         );
     }
 
     /*
      * @see Pluf_Model::preSave()
      */
-    function preSave ($create = false)
+    function preSave($create = false)
     {
         $this->meta = serialize($this->data);
         if ($this->id == '') {
@@ -117,7 +118,7 @@ class Bank_Backend extends Pluf_Model
      *
      * تمام داده‌هایی که با کلید payMeta ذخیره شده را بازیابی می‌کند.
      */
-    function restore ()
+    function restore()
     {
         $this->data = unserialize($this->meta);
     }
@@ -127,7 +128,7 @@ class Bank_Backend extends Pluf_Model
      *
      * تمام داده‌های ذخیره شده در نشست را پاک می‌کند.
      */
-    function clear ()
+    function clear()
     {
         $this->data = array();
         $this->touched = true;
@@ -146,7 +147,7 @@ class Bank_Backend extends Pluf_Model
      *            داده مورد نظر. در صورتی که مقدار آن تهی باشد به معنی
      *            حذف است.
      */
-    function setMeta ($key, $value = null)
+    function setMeta($key, $value = null)
     {
         if (is_null($value)) {
             unset($this->data[$key]);
@@ -155,7 +156,7 @@ class Bank_Backend extends Pluf_Model
         }
         $this->touched = true;
     }
-    
+
     /**
      * داده معادل با کلید تعیین شده را برمی‌گرداند
      *
@@ -163,7 +164,7 @@ class Bank_Backend extends Pluf_Model
      * این فراخوانی
      * برگردانده خواهد شد.
      */
-    function getMeta ($key = null, $default = '')
+    function getMeta($key = null, $default = '')
     {
         if (is_null($key)) {
             return parent::getData();
@@ -175,19 +176,17 @@ class Bank_Backend extends Pluf_Model
         }
     }
 
-    private function getGlobalSelect ()
+    private function getGlobalSelect()
     {
         if (isset($this->_cache['getGlobalSelect']))
             return $this->_cache['getGlobalSelect'];
         $select = array();
         $table = $this->getSqlTable();
         foreach ($this->_a['cols'] as $col => $val) {
-            if (($val['type'] == 'Pluf_DB_Field_Manytomany') ||
-                     (array_key_exists('secure', $val) && $val['secure'])) {
+            if (($val['type'] == 'Pluf_DB_Field_Manytomany') || (array_key_exists('secure', $val) && $val['secure'])) {
                 continue;
             }
-            $select[] = $table . '.' . $this->_con->qn($col) . ' AS ' .
-                     $this->_con->qn($col);
+            $select[] = $table . '.' . $this->_con->qn($col) . ' AS ' . $this->_con->qn($col);
         }
         $this->_cache['getSelect'] = implode(', ', $select);
         return $this->_cache['getSelect'];
@@ -197,7 +196,7 @@ class Bank_Backend extends Pluf_Model
      *
      * @return unknown
      */
-    public function get_engine ()
+    public function get_engine()
     {
         return Bank_Shortcuts_GetEngineOr404($this->engine);
     }
