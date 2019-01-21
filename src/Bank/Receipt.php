@@ -94,7 +94,6 @@ class Bank_Receipt extends Pluf_Model
                 'blank' => true,
                 'size' => 200
             ),
-
             'payRef' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => true,
@@ -106,7 +105,7 @@ class Bank_Receipt extends Pluf_Model
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => true,
                 'size' => 200,
-                'readable' => false
+                'readable' => true
             ),
             'payMeta' => array(
                 'type' => 'Pluf_DB_Field_Text',
