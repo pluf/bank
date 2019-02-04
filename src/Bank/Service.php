@@ -91,6 +91,9 @@ class Bank_Service
      * زمانی که یک پرداخت ایجاد می‌شود نیاز هست که بررسی کنیم که آیا پرداخت در
      * سمت بانک انجام شده است. این فراخوانی این بررسی رو انجام می‌ده و حالت
      * پرداخت رو به روز می‌کنه.
+     * 
+     * در صورتی که مشکلی در به روزرسانی حالت پرداخت به وجود آید مثلا بک‌اند مربوط به پرداخت 
+     * از سیستم حذف شده باشد این تابع پرداخت رو بدون تغییر و به‌روزرسانی برمی‌گرداند.
      *
      * @param Bank_Receipt $receipt
      * @return Bank_Receipt
@@ -98,9 +101,11 @@ class Bank_Service
     public static function update($receipt)
     {
         $backend = $receipt->get_backend();
-        $engine = $backend->get_engine();
-        if ($engine->update($receipt)) {
-            $receipt->update();
+        if ($backend !== null) {
+            $engine = $backend->get_engine();
+            if ($engine->update($receipt)) {
+                $receipt->update();
+            }
         }
         return $receipt;
     }
@@ -120,7 +125,7 @@ class Bank_Service
         } elseif (! is_null($owner)) { // module
             $ownerClass = $owner;
         }
-        
+
         // get list
         $receipt = new Bank_Receipt();
         $q = new Pluf_SQL('owner_class=%s AND owner_id=%s', array(
@@ -143,7 +148,7 @@ class Bank_Service
         return array(
             new Bank_Engine_Mellat(),
             new Bank_Engine_Zarinpal(),
-            
+
             new Bank_Engine_PayPall(),
             new Bank_Engine_BitPay()
         );
