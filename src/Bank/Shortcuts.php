@@ -49,7 +49,7 @@ function Bank_Shortcuts_GetEngineOr404 ($type)
             return $item;
         }
     }
-    throw new Bank_Exception_EngineNotFound();
+    throw new Bank_Exception_EngineNotFound("Bank engine not found: " . $type);
 }
 
 /**
