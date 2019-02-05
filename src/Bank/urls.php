@@ -51,14 +51,14 @@ return array (
             'GET'
         )
     ),
-//     array(
-//         'regex' => '#^/backends/parameters$#',
-//         'model' => 'Bank_Views_Backend',
-//         'method' => 'createParameter',
-//         'http-method' => array(
-//             'GET'
-//         )
-//     ),
+    // array(
+    // 'regex' => '#^/backends/parameters$#',
+    // 'model' => 'Bank_Views_Backend',
+    // 'method' => 'createParameter',
+    // 'http-method' => array(
+    // 'GET'
+    // )
+    // ),
     array(
         'regex' => '#^/backends$#',
         'model' => 'Bank_Views_Backend',
@@ -172,5 +172,68 @@ return array (
         'precond' => array(
             'User_Precondition::ownerRequired'
         )
+    ),
+
+    // /wallets:
+    // /wallets/{walletId}:
+    // /wallets/{walletId}/transfers:
+    // /wallets/{walletId}/transfers/{transferId}:
+    /*
+     * ********************************************
+     * wallet
+     * ********************************************
+     */
+    array( // Create
+        'regex' => '#^/wallets$#',
+        'model' => 'Bank_Views_Wallet',
+        'method' => 'create',
+        'http-method' => 'POST',
+        'precond' => array(
+            'User_Precondition::loginRequired'
+        )
+    ),
+    array( // Read (list)
+        'regex' => '#^/wallets$#',
+        'model' => 'Bank_Views_Wallet',
+        'method' => 'find',
+        'http-method' => 'GET',
+        'precond' => array(
+            'User_Precondition::loginRequired'
+        ),
+        'params' => array(
+            'model' => 'Bank_Wallet'
+        )
+    ),
+    array( // Read
+        'regex' => '#^/wallets/(?P<modelId>\d+)$#',
+        'model' => 'Bank_Views_Wallet',
+        'method' => 'get',
+        'http-method' => 'GET',
+        'precond' => array(
+            'User_Precondition::loginRequired'
+        )
+    ),
+    array( // Update
+        'regex' => '#^/wallets/(?P<modelId>\d+)$#',
+        'model' => 'Bank_Views_Wallet',
+        'method' => 'update',
+        'http-method' => 'POST',
+        'params' => array(
+            'model' => 'Bank_Wallet'
+        ),
+        'precond' => array(
+            'User_Precondition::loginRequired'
+        )
+    ),
+    array( // Delete
+        'regex' => '#^/wallets/(?P<modelId>\d+)$#',
+        'model' => 'Bank_Views_Wallet',
+        'method' => 'delete',
+        'http-method' => 'DELETE',
+        'precond' => array(
+            'User_Precondition::loginRequired'
+        )
     )
 );
+
+
