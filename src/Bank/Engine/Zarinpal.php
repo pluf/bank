@@ -46,6 +46,15 @@ class Bank_Engine_Zarinpal extends Bank_Engine
         return 'Zarin Pal Payment Service';
     }
 
+    /**
+     * The currency of zarinpal gate is Iran Tooman (IRT)
+     * {@inheritDoc}
+     * @see Bank_Engine::getCurrency()
+     */
+    public function getCurrency(){
+        return 'IRT';
+    }
+    
     /*
      *
      */

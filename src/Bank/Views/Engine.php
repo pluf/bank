@@ -42,7 +42,7 @@ class Bank_Views_Engine
                 'items_per_page' => count($items),
                 'page_number' => 1
         );
-        return new Pluf_HTTP_Response_Json($page);
+        return $page;
     }
 
     /**

@@ -51,6 +51,10 @@ class Bank_Engine_PayPall extends Bank_Engine
         return 'Accept payments with one of PayPal\'s';
     }
 
+    public function getCurrency(){
+        return 'USD';
+    }
+    
     /*
      *
      */

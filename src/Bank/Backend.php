@@ -82,6 +82,15 @@ class Bank_Backend extends Pluf_Model
                 'blank' => false,
                 'size' => 50
             ),
+            // Should be one of currecny alphabet codes in the list of currencies in the ISO 4217 (plus IRT for iran tooman)
+            'currency' => array(
+                'type' => 'Pluf_DB_Field_Varchar',
+                'blank' => false,
+                'is_null' => false,
+                'size' => 50,
+                'editable' => false,
+                'readable' => true
+            ),
 
             'creation_dtime' => array(
                 'type' => 'Pluf_DB_Field_Datetime',

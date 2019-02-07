@@ -43,15 +43,15 @@ class Bank_Form_BackendNew extends Pluf_Form
     /*
      *
      */
-    public function initFields ($extra = array())
+    public function initFields($extra = array())
     {
         $this->engine = $extra['engine'];
-        
+
         $params = $this->engine->getParameters();
         foreach ($params['children'] as $param) {
             $options = array(
-                    // 'required' => $param['required']
-                    'required' => false
+                // 'required' => $param['required']
+                'required' => false
             );
             $field = null;
             switch ($param['type']) {
@@ -72,28 +72,28 @@ class Bank_Form_BackendNew extends Pluf_Form
      * بر اساس داده‌هایی که توسط کاربر تعیین شده است یک متور جدید پرداخت ایجاد
      * می‌کند و آن را به متورهای پرداخت ملک اضافه می‌کند.
      *
-     * @param string $commit            
+     * @param string $commit
      * @throws Pluf_Exception
      * @return Bank_Backend
      */
-    function save ($commit = true)
+    function save($commit = true)
     {
         if (! $this->isValid()) {
             // TODO: maso, 1395: باید از خطای مدل فرم استفاده شود.
-            throw new Pluf_Exception(
-                    __('Cannot save the backend from an invalid form.'));
+            throw new Pluf_Exception(__('Cannot save the backend from an invalid form.'));
         }
         // Set attributes
         $backend = new Bank_Backend();
         $backend->setFromFormData($this->cleaned_data);
         $backend->engine = $this->engine->getType();
+        $backend->currency = $this->engine->getCurrency();
         $params = $this->engine->getParameters();
         foreach ($params['children'] as $param) {
-            if ($param['name'] === 'title' || $param['name'] === 'description' ||
-                     $param['name'] === 'symbol' || $param['name'] === 'title')
+            if ($param['name'] === 'title' || $param['name'] === 'description' || 
+                $param['name'] === 'symbol' || $param['name'] === 'title' ||
+                $param['name'] === 'currency')
                 continue;
-            $backend->setMeta($param['name'], 
-                    $this->cleaned_data[$param['name']]);
+            $backend->setMeta($param['name'], $this->cleaned_data[$param['name']]);
         }
         // TODO: maso, 1395: تنها پارامترهایی اضافه باید به صورت کد شده در
         // موجودیت قرار گیرد.

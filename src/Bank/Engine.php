@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Pluf Framework, a simple PHP Application Framework.
  * Copyright (C) 2010-2020 Phoinex Scholars Co. (http://dpq.co.ir)
@@ -19,9 +20,9 @@
 
 /**
  * سرویس پرداخت‌ها را برای ماژولهای داخلی سیستم ایجاد می کند.
- * 
- * @author maso<mostafa.barmshory@dpq.co.ir>
  *
+ * @author maso<mostafa.barmshory@dpq.co.ir>
+ *        
  */
 class Bank_Engine implements JsonSerializable
 {
@@ -32,14 +33,13 @@ class Bank_Engine implements JsonSerializable
      *
      * @return string
      */
-    public function getType ()
+    public function getType()
     {
         $name = strtolower(get_class($this));
         // NOTE: maso, 1395: تمام متورهای پرداخت باید در پوشه تعیین شده قرار
         // بگیرند
         if (strpos($name, Bank_Engine::ENGINE_PREFIX) !== 0) {
-            throw new Bank_Exception_EngineLoad(
-                    'Engine class must be placed in engine package.');
+            throw new Bank_Exception_EngineLoad('Engine class must be placed in engine package.');
         }
         return substr($name, strlen(Bank_Engine::ENGINE_PREFIX));
     }
@@ -48,7 +48,7 @@ class Bank_Engine implements JsonSerializable
      *
      * @return string
      */
-    public function getSymbol ()
+    public function getSymbol()
     {
         return $this->getType();
     }
@@ -57,7 +57,7 @@ class Bank_Engine implements JsonSerializable
      *
      * @return string
      */
-    public function getTitle ()
+    public function getTitle()
     {
         return '';
     }
@@ -66,13 +66,24 @@ class Bank_Engine implements JsonSerializable
      *
      * @return string
      */
-    public function getDescription ()
+    public function getDescription()
     {
         return '';
     }
 
     /**
-     * Creates a new transaction 
+     * Returns supported currency by this engine
+     * Returned value is based on ISO 4217 list of currencies (plus IRT for iran tooman)
+     *
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return '';
+    }
+
+    /**
+     * Creates a new transaction
      *
      * اطلاعات ایجاد شده برای پرداخت می‌تواند در متا قرار گیرد. و تمام اطلاعات
      * مورد نیاز باید ار تقاضا به دست آید.
@@ -87,9 +98,9 @@ class Bank_Engine implements JsonSerializable
      *
      * بعد از این روال ورودی ذخیره خواهد شد.
      *
-     * @param Bank_Receipt $receipt            
+     * @param Bank_Receipt $receipt
      */
-    public function create ($receipt)
+    public function create($receipt)
     {
         // XXX: maso, 1395: ایجاد یک پرداخت
     }
@@ -109,9 +120,9 @@ class Bank_Engine implements JsonSerializable
      * بعد از این فراخوانی داده‌ها باز ذخیره سازی می‌شود اگر و تنها اگر پرداخت
      * انجام شده باشد.
      *
-     * @param Bank_Receipt $receipt            
+     * @param Bank_Receipt $receipt
      */
-    public function update ($receipt)
+    public function update($receipt)
     {
         // XXX: maso, 1395: ایجاد یک پرداخت
         return false;
@@ -122,13 +133,14 @@ class Bank_Engine implements JsonSerializable
      *
      * @see JsonSerializable::jsonSerialize()
      */
-    public function jsonSerialize ()
+    public function jsonSerialize()
     {
         $coded = array(
-                'type' => $this->getType(),
-                'title' => $this->getTitle(),
-                'description' => $this->getDescription(),
-                'symbol' => $this->getSymbol()
+            'type' => $this->getType(),
+            'title' => $this->getTitle(),
+            'description' => $this->getDescription(),
+            'symbol' => $this->getSymbol(),
+            'currency' => $this->getCurrency()
         );
         return $coded;
     }
@@ -142,25 +154,26 @@ class Bank_Engine implements JsonSerializable
      *
      * خروجی این فراخوانی یک فهرست است توصیف خصوصیت‌ها است.
      */
-    public function getParameters ()
+    public function getParameters()
     {
         $param = array(
-                'id' => $this->getType(),
-                'name' => $this->getType(),
-                'type' => 'struct',
-                'title' => $this->getTitle(),
-                'description' => $this->getDescription(),
-                'editable' => true,
-                'visible' => true,
-                'priority' => 5,
-                'symbol' => $this->getSymbol(),
-                'children' => []
+            'id' => $this->getType(),
+            'name' => $this->getType(),
+            'type' => 'struct',
+            'title' => $this->getTitle(),
+            'description' => $this->getDescription(),
+            'editable' => true,
+            'visible' => true,
+            'priority' => 5,
+            'symbol' => $this->getSymbol(),
+            'currency' => $this->getCurrency(),
+            'children' => []
         );
         $general = $this->getGeneralParam();
         foreach ($general as $gp) {
             $param['children'][] = $gp;
         }
-        
+
         $extra = $this->getExtraParam();
         foreach ($extra as $ep) {
             $param['children'][] = $ep;
@@ -174,50 +187,50 @@ class Bank_Engine implements JsonSerializable
      * @return
      *
      */
-    public function getGeneralParam ()
+    public function getGeneralParam()
     {
         $params = array();
         $params[] = array(
-                'name' => 'title',
-                'type' => 'String',
-                'unit' => 'none',
-                'title' => 'title',
-                'description' => 'beackend title',
-                'editable' => true,
-                'visible' => true,
-                'priority' => 5,
-                'symbol' => 'title',
-                'defaultValue' => 'no title',
-                'validators' => [
-                        'NotNull',
-                        'NotEmpty'
-                ]
+            'name' => 'title',
+            'type' => 'String',
+            'unit' => 'none',
+            'title' => 'title',
+            'description' => 'beackend title',
+            'editable' => true,
+            'visible' => true,
+            'priority' => 5,
+            'symbol' => 'title',
+            'defaultValue' => 'no title',
+            'validators' => [
+                'NotNull',
+                'NotEmpty'
+            ]
         );
         $params[] = array(
-                'name' => 'description',
-                'type' => 'String',
-                'unit' => 'none',
-                'title' => 'description',
-                'description' => 'beackend description',
-                'editable' => true,
-                'visible' => true,
-                'priority' => 5,
-                'symbol' => 'title',
-                'defaultValue' => 'description',
-                'validators' => []
+            'name' => 'description',
+            'type' => 'String',
+            'unit' => 'none',
+            'title' => 'description',
+            'description' => 'beackend description',
+            'editable' => true,
+            'visible' => true,
+            'priority' => 5,
+            'symbol' => 'title',
+            'defaultValue' => 'description',
+            'validators' => []
         );
         $params[] = array(
-                'name' => 'symbol',
-                'type' => 'String',
-                'unit' => 'none',
-                'title' => 'Symbol',
-                'description' => 'beackend symbol',
-                'editable' => true,
-                'visible' => true,
-                'priority' => 5,
-                'symbol' => 'icon',
-                'defaultValue' => '',
-                'validators' => []
+            'name' => 'symbol',
+            'type' => 'String',
+            'unit' => 'none',
+            'title' => 'Symbol',
+            'description' => 'beackend symbol',
+            'editable' => true,
+            'visible' => true,
+            'priority' => 5,
+            'symbol' => 'icon',
+            'defaultValue' => '',
+            'validators' => []
         );
         return $params;
     }
@@ -225,7 +238,7 @@ class Bank_Engine implements JsonSerializable
     /**
      * خصوصیت‌های اضافه را تعیین می‌کند.
      */
-    public function getExtraParam ()
+    public function getExtraParam()
     {
         // TODO: maso, 1395: فرض شده که این فراخوانی توسط پیاده‌سازی‌ها بازنویسی
         // شود
