@@ -174,8 +174,6 @@ return array (
         )
     ),
 
-    // /wallets:
-    // /wallets/{walletId}:
     // /wallets/{walletId}/transfers:
     // /wallets/{walletId}/transfers/{transferId}:
     /*
@@ -199,9 +197,6 @@ return array (
         'http-method' => 'GET',
         'precond' => array(
             'User_Precondition::loginRequired'
-        ),
-        'params' => array(
-            'model' => 'Bank_Wallet'
         )
     ),
     array( // Read
@@ -218,9 +213,6 @@ return array (
         'model' => 'Bank_Views_Wallet',
         'method' => 'update',
         'http-method' => 'POST',
-        'params' => array(
-            'model' => 'Bank_Wallet'
-        ),
         'precond' => array(
             'User_Precondition::loginRequired'
         )
@@ -233,7 +225,71 @@ return array (
         'precond' => array(
             'User_Precondition::loginRequired'
         )
-    )
+    ),
+    /*
+     * ********************************************
+     * transfers of wallet
+     * ********************************************
+     */
+    array( // Create
+        'regex' => '#^/wallets/(?P<parentId>\d+)/transfers$#',
+        'model' => 'Bank_Views_Transfer',
+        'method' => 'create',
+        'http-method' => 'POST',
+        'precond' => array(
+            'User_Precondition::loginRequired'
+        )
+    ),
+    array( // Read (list)
+        'regex' => '#^/wallets/(?P<parentId>\d+)/transfers$#',
+        'model' => 'Bank_Views_Transfer',
+        'method' => 'find',
+        'http-method' => 'GET',
+        'precond' => array(
+            'User_Precondition::loginRequired'
+        )
+    ),
+    array( // Read
+        'regex' => '#^/wallets/(?P<parentId>\d+)/transfers/(?P<modelId>\d+)$#',
+        'model' => 'Bank_Views_Transfer',
+        'method' => 'get',
+        'http-method' => 'GET',
+        'precond' => array(
+            'User_Precondition::loginRequired'
+        )
+    ),
+    /*
+     * ********************************************
+     * payments of wallet
+     * ********************************************
+     */
+    array( // Create
+        'regex' => '#^/wallets/(?P<parentId>\d+)/payments$#',
+        'model' => 'Bank_Views_Transfer',
+        'method' => 'createPayment',
+        'http-method' => 'POST',
+        'precond' => array(
+            'User_Precondition::loginRequired'
+        )
+    ),
+    array( // Read (list)
+        'regex' => '#^/wallets/(?P<parentId>\d+)/payments$#',
+        'model' => 'Bank_Views_Transfer',
+        'method' => 'findPayments',
+        'http-method' => 'GET',
+        'precond' => array(
+            'User_Precondition::loginRequired'
+        )
+    ),
+    array( // Read
+        'regex' => '#^/wallets/(?P<parentId>\d+)/payments/(?P<modelId>\d+)$#',
+        'model' => 'Bank_Views_Transfer',
+        'method' => 'getPayment',
+        'http-method' => 'GET',
+        'precond' => array(
+            'User_Precondition::loginRequired'
+        )
+    ),
 );
 
 

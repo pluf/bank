@@ -24,10 +24,10 @@ Pluf::loadFunction('Pluf_Shortcuts_RenderToResponse');
  * در صورتی که پیش از این نمونه‌ای برای پرداخت ایجاد شده باشد آن را به عنوان
  * نتیجه برمی‌گرداند.
  *
- * @param Bank_Receipt $object            
+ * @param Bank_Receipt $object
  * @return Bank_Receipt
  */
-function Bank_Shortcuts_receiptFactory ($object)
+function Bank_Shortcuts_receiptFactory($object)
 {
     if ($object == null || ! isset($object))
         return new Bank_Receipt();
@@ -35,13 +35,13 @@ function Bank_Shortcuts_receiptFactory ($object)
 }
 
 /**
- * یک متور پرداخت را پیدا می‌کند.
+ * یک موتور پرداخت را پیدا می‌کند.
  *
- * @param unknown $type            
+ * @param string $type
  * @throws Bank_Exception_EngineNotFound
- * @return unknown
+ * @return Bank_Engine
  */
-function Bank_Shortcuts_GetEngineOr404 ($type)
+function Bank_Shortcuts_GetEngineOr404($type)
 {
     $items = Bank_Service::engines();
     foreach ($items as $item) {
@@ -54,11 +54,11 @@ function Bank_Shortcuts_GetEngineOr404 ($type)
 
 /**
  *
- * @param unknown $id            
+ * @param unknown $id
  * @throws Pluf_HTTP_Error404
  * @return Bank_Backend
  */
-function Bank_Shortcuts_GetBankOr404 ($id)
+function Bank_Shortcuts_GetBankOr404($id)
 {
     $item = new Bank_Backend($id);
     if ((int) $id > 0 && $item->id == $id) {
@@ -69,11 +69,11 @@ function Bank_Shortcuts_GetBankOr404 ($id)
 
 /**
  *
- * @param unknown $id            
+ * @param unknown $id
  * @throws Pluf_HTTP_Error404
  * @return Bank_Receipt
  */
-function Bank_Shortcuts_GetReceiptOr404 ($id)
+function Bank_Shortcuts_GetReceiptOr404($id)
 {
     $item = new Bank_Receipt($id);
     if ((int) $id > 0 && $item->id == $id) {
@@ -81,3 +81,49 @@ function Bank_Shortcuts_GetReceiptOr404 ($id)
     }
     throw new Pluf_HTTP_Error404("Receipt not found (" . $id . ")");
 }
+
+/**
+ * Checks if given currencies are compatible.
+ * Two currencies are compatible if both are same or one is 'IRR' and other is 'IRT'.
+ *
+ * @param string $currency1
+ * @param string $currency2
+ * @return boolean
+ */
+function Bank_Shortcuts_IsCurrenciesCompatible($currency1, $currency2)
+{
+    if ($currency1 === $currency2) {
+        return true;
+    }
+    // The currencies 'IRR' and 'IRT' are compatible
+    if (($currency1 === 'IRR' && $currency2 === 'IRT') || ($currency1 === 'IRT' && $currency2 === 'IRR')) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Convert given value from given currency and returns the new amount in the $toCurrency if pissible
+ * elese throws an exception. 
+ * @param number $amount
+ * @param string $fromCurrency
+ * @param string $toCurrency
+ * @throws Pluf_Exception_BadRequest
+ * @return number
+ */
+function Bank_Shortcuts_ConvertCurrency($amount, $fromCurrency, $toCurrency)
+{
+    if ($fromCurrency === $toCurrency) {
+        return $amount;
+    }
+    // The currencies 'IRR' and 'IRT' are compatible
+    if ($fromCurrency === 'IRR' && $toCurrency === 'IRT') {
+        return $amount / 10.0;
+    }
+    if ($fromCurrency === 'IRT' && $toCurrency === 'IRR') {
+        return $amount * 10;
+    }
+    throw new Pluf_Exception_BadRequest('Could not convert amount from ' . $fromCurrency . 'to ' . $toCurrency);
+}
+
+
