@@ -26,17 +26,13 @@ return array (
         'regex' => '#^/engines$#',
         'model' => 'Bank_Views_Engine',
         'method' => 'find',
-        'http-method' => array(
-            'GET'
-        )
+        'http-method' => 'GET'
     ),
     array(
         'regex' => '#^/engines/(?P<type>.+)$#',
         'model' => 'Bank_Views_Engine',
         'method' => 'get',
-        'http-method' => array(
-            'GET'
-        )
+        'http-method' => 'GET'
     ),
 	/*
 	 * ********************************************
@@ -45,20 +41,15 @@ return array (
 	 */
 	array(
         'regex' => '#^/backends$#',
-        'model' => 'Bank_Views_Backend',
-        'method' => 'find',
-        'http-method' => array(
-            'GET'
+        'model' => 'Pluf_Views',
+        'method' => 'findObject',
+        'http-method' => 'GET',
+        'params' => array(
+            'model' => 'Bank_Backend',
+            'view' => 'global',
+            'sql' => 'deleted=false'
         )
     ),
-    // array(
-    // 'regex' => '#^/backends/parameters$#',
-    // 'model' => 'Bank_Views_Backend',
-    // 'method' => 'createParameter',
-    // 'http-method' => array(
-    // 'GET'
-    // )
-    // ),
     array(
         'regex' => '#^/backends$#',
         'model' => 'Bank_Views_Backend',
@@ -74,9 +65,7 @@ return array (
         'regex' => '#^/backends/(?P<id>\d+)$#',
         'model' => 'Bank_Views_Backend',
         'method' => 'get',
-        'http-method' => array(
-            'GET'
-        )
+        'http-method' => 'GET'
     ),
     array(
         'regex' => '#^/backends/(?P<id>\d+)$#',
@@ -90,11 +79,13 @@ return array (
         )
     ),
     array(
-        'regex' => '#^/backends/(?P<id>\d+)$#',
-        'model' => 'Bank_Views_Backend',
-        'method' => 'delete',
-        'http-method' => array(
-            'DELETE'
+        'regex' => '#^/backends/(?P<modelId>\d+)$#',
+        'model' => 'Pluf_Views',
+        'method' => 'deleteObject',
+        'http-method' => 'DELETE',
+        'params' => array(
+            'model' => 'Bank_Backend',
+            'permanently' => false
         ),
         'precond' => array(
             'User_Precondition::ownerRequired'
@@ -289,7 +280,7 @@ return array (
         'precond' => array(
             'User_Precondition::loginRequired'
         )
-    ),
+    )
 );
 
 
