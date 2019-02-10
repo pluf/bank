@@ -17,17 +17,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\IncompleteTestError;
+
 require_once 'Pluf.php';
+
+Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');
 
 /**
  *
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
  */
-class Bank_REST_BasicTest extends TestCase
+class Wallet_ModelTest extends TestCase
 {
 
-    private static $client = null;
+    var $user = null;
 
     /**
      *
@@ -36,8 +40,9 @@ class Bank_REST_BasicTest extends TestCase
     public static function createDataBase()
     {
         Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(Pluf::f('installed_apps', array()));
+        $m = new Pluf_Migration(Pluf::f('installed_apps'));
         $m->install();
+        $m->init();
 
         // Test user
         $user = new User_Account();
@@ -58,21 +63,6 @@ class Bank_REST_BasicTest extends TestCase
 
         $per = User_Role::getFromString('tenant.owner');
         $user->setAssoc($per);
-
-        self::$client = new Test_Client(array(
-            array(
-                'app' => 'Bank',
-                'regex' => '#^/bank#',
-                'base' => '',
-                'sub' => include 'Bank/urls.php'
-            ),
-            array(
-                'app' => 'User',
-                'regex' => '#^/user#',
-                'base' => '',
-                'sub' => include 'User/urls.php'
-            )
-        ));
     }
 
     /**
@@ -86,43 +76,67 @@ class Bank_REST_BasicTest extends TestCase
     }
 
     /**
-     * Geting list of engines
      *
-     * @test
+     * @before
      */
-    public function shouldAnonymousGetListOfEngines()
+    public function init()
     {
-        $response = self::$client->get('/bank/engines');
-        Test_Assert::assertResponseNotNull($response, 'Find result is empty');
-        Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
-        Test_Assert::assertResponsePaginateList($response, 'Find result is not JSON paginated list');
+        $this->user = User_Account::getUser('test');
     }
 
     /**
-     * Geting an engine info
      *
      * @test
      */
-    public function shouldAnonymousGetAnEngine()
+    public function shouldPossibleCreateNew()
     {
-        $engs = Bank_Service::engines();
-        foreach ($engs as $eng) {
-            $response = self::$client->get('/bank/engines/' . $eng->getType());
-            Test_Assert::assertResponseNotNull($response, 'Find result is empty');
-            Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
-        }
+        $wallet = new Bank_Wallet();
+        $wallet->title = 'wallet-' . rand();
+        $wallet->currency = 'IRR';
+        $wallet->description = 'It is my wallet description';
+        $wallet->owner_id = $this->user;
+        Test_Assert::assertTrue($wallet->create(), 'Impossible to create wallet');
     }
 
     /**
-     * Geting list of engines
      *
      * @test
      */
-    public function shouldAnonymousGetListOfBackend()
+    public function shouldPossibleToGetTransfers()
     {
-        $response = self::$client->get('/bank/backends');
-        Test_Assert::assertResponseNotNull($response, 'Find result is empty');
-        Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
-        Test_Assert::assertResponsePaginateList($response, 'Find result is not JSON paginated list');
+        $wallet = new Bank_Wallet();
+        $wallet->title = 'wallet-' . rand();
+        $wallet->currency = 'IRR';
+        $wallet->description = 'It is my wallet description';
+        $wallet->owner_id = $this->user;
+        Test_Assert::assertTrue($wallet->create(), 'Impossible to create wallet');
+
+        $wallet = new Bank_Wallet($wallet->id);
+        // The transfer has two foreign key to the wallet
+        $transfers = $wallet->get_withdrawals_list();
+        Test_Assert::assertEquals(0, $transfers->count());
+        $transfers = $wallet->get_deposits_list();
+        Test_Assert::assertEquals(0, $transfers->count());
+    }
+
+    /**
+     *
+     * @test
+     */
+    public function shouldPossibleToGetOwner()
+    {
+        $wallet = new Bank_Wallet();
+        $wallet->title = 'wallet-' . rand();
+        $wallet->currency = 'IRR';
+        $wallet->description = 'It is my wallet description';
+        $wallet->owner_id = $this->user;
+        Test_Assert::assertTrue($wallet->create(), 'Impossible to create wallet');
+
+        $wallet = new Bank_Wallet($wallet->id);
+        $owner = $wallet->get_owner();
+        Test_Assert::assertNotEquals(null, $owner);
+        Test_Assert::assertEquals($this->user->id, $owner->id);
     }
 }
+
+

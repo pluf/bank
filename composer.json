@@ -23,6 +23,7 @@
 	"require" : {
 		"pluf/core" : "5.1.x",
 		"pluf/user" : "5.1.x",
+		"pluf/monitor" : "5.1.x",
 		"zarinpal/zarinpal" : "^1.1.0",
 		"paypal/rest-api-sdk-php" : "^1.13"
 	},
