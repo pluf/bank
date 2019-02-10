@@ -23,53 +23,8 @@ Pluf::loadFunction('Bank_Shortcuts_GetEngineOr404');
  * @author maso <mostafa.barmsohry@dpq.co.ir>
  *        
  */
-class Bank_Views_Backend
+class Bank_Views_Backend extends Pluf_Views
 {
-    // XXX: maso, 1395: add security
-    /**
-     * فهرست تمام پشتوانه‌ها رو تعیین می‌کنه.
-     *
-     * @param Pluf_HTTP_Request $request            
-     * @param array $match            
-     */
-    public function find ($request, $match)
-    {
-        $pag = new Pluf_Paginator(new Bank_Backend());
-        $pag->configure(array(), 
-                array( // search
-                        'title',
-                        'description'
-                ), 
-                array( // sort
-                        'id',
-                        'title',
-                        'creation_dtime'
-                ));
-        $pag->action = array();
-        $pag->items_per_page = 20;
-        $pag->model_view = 'global';
-        $pag->sort_order = array(
-                'creation_dtime',
-                'DESC'
-        );
-        $pag->setFromRequest($request);
-        return new Pluf_HTTP_Response_Json($pag->render_object());
-    }
-
-//     /**
-//      *
-//      * @param Pluf_HTTP_Request $request
-//      * @param array $match
-//      */
-//     public function createParameter ($request, $match)
-//     {
-//         $type = 'not set';
-//         if (array_key_exists('type', $request->REQUEST)) {
-//             $type = $request->REQUEST['type'];
-//         }
-//         $engine = Bank_Shortcuts_GetEngineOr404($type);
-//         return new Pluf_HTTP_Response_Json($engine->getParameters());
-//     }
 
     /**
      * یک نمونه جدید از متور پرداخت ایجاد می‌کند.
@@ -77,7 +32,7 @@ class Bank_Views_Backend
      * @param Pluf_HTTP_Request $request
      * @param array $match
      */
-    public function create ($request, $match)
+    public function create($request, $match)
     {
         $type = 'not set';
         if (array_key_exists('type', $request->REQUEST)) {
@@ -85,7 +40,7 @@ class Bank_Views_Backend
         }
         $engine = Bank_Shortcuts_GetEngineOr404($type);
         $params = array(
-                'engine' => $engine
+            'engine' => $engine
         );
         $form = new Bank_Form_BackendNew($request->REQUEST, $params);
         $backend = $form->save();
@@ -97,7 +52,7 @@ class Bank_Views_Backend
      * @param Pluf_HTTP_Request $request
      * @param array $match
      */
-    public function get ($request, $match)
+    public function get($request, $match)
     {
         $backend = Bank_Shortcuts_GetBankOr404($match['id']);
         return new Pluf_HTTP_Response_Json($backend);
@@ -108,23 +63,11 @@ class Bank_Views_Backend
      * @param Pluf_HTTP_Request $request
      * @param array $match
      */
-    public function delete ($request, $match)
-    {
-        $backend = Bank_Shortcuts_GetBankOr404($match['id']);
-        $backend->delete();
-        return new Pluf_HTTP_Response_Json($backend);
-    }
-
-    /**
-     *
-     * @param Pluf_HTTP_Request $request
-     * @param array $match
-     */
-    public function update ($request, $match)
+    public function update($request, $match)
     {
         $backend = Bank_Shortcuts_GetBankOr404($match['id']);
         $params = array(
-                'backend' => $backend
+            'backend' => $backend
         );
         $form = new Bank_Form_BackendUpdate($request->REQUEST, $params);
         $backend = $form->update();

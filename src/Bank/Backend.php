@@ -91,7 +91,13 @@ class Bank_Backend extends Pluf_Model
                 'editable' => false,
                 'readable' => true
             ),
-
+            'deleted' => array(
+                'type' => 'Pluf_DB_Field_Boolean',
+                'blank' => false,
+                'default' => false,
+                'readable' => true,
+                'editable' => false
+            ),
             'creation_dtime' => array(
                 'type' => 'Pluf_DB_Field_Datetime',
                 'blank' => true,
@@ -203,7 +209,7 @@ class Bank_Backend extends Pluf_Model
 
     /**
      *
-     * @return unknown
+     * @return Bank_Engine
      */
     public function get_engine()
     {
