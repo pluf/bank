@@ -31,9 +31,13 @@ class Transfer_RestTest extends TestCase
     var $client;
 
     var $user;
+
     var $wallet1;
+
     var $wallet2;
+
     var $backend;
+
     var $receipt;
 
     /**
@@ -105,7 +109,7 @@ class Transfer_RestTest extends TestCase
         ));
         // User
         $this->user = User_Account::getUser('test');
-        
+
         // Wallets
         $this->wallet1 = new Bank_Wallet();
         $this->wallet1->title = 'wallet-' . rand();
@@ -113,14 +117,14 @@ class Transfer_RestTest extends TestCase
         $this->wallet1->description = 'It is my wallet description';
         $this->wallet1->owner_id = $this->user;
         Test_Assert::assertTrue($this->wallet1->create(), 'Impossible to create transfer');
-        
+
         $this->wallet2 = new Bank_Wallet();
         $this->wallet2->title = 'wallet-' . rand();
         $this->wallet2->currency = 'IRR';
         $this->wallet2->description = 'It is my wallet description';
         $this->wallet2->owner_id = $this->user;
         Test_Assert::assertTrue($this->wallet2->create(), 'Impossible to create transfer');
-        
+
         // Bank Backend
         $this->backend = new Bank_Backend();
         $this->backend->title = 'test backend';
@@ -128,8 +132,8 @@ class Transfer_RestTest extends TestCase
         $this->backend->redirect = 'test.pluf.ir';
         $this->backend->engine = 'zarinpal';
         $this->backend->currency = 'IRR';
-        Test_Assert::assertTrue($this->backend->create(), 'Impossible to create wallet');
-        
+        Test_Assert::assertTrue($this->backend->create(), 'Impossible to create bank backend');
+
         // Receipt
         $param = array(
             'amount' => rand(),
@@ -139,8 +143,7 @@ class Transfer_RestTest extends TestCase
             'backend_id' => $this->backend->id
         );
         $this->receipt = Bank_Service::create($param, 'user-account', $this->user->id);
-        Test_Assert::assertTrue(!$this->receipt->isAnonymous(), 'Impossible to create receipt');
-        
+        Test_Assert::assertTrue(! $this->receipt->isAnonymous(), 'Impossible to create receipt');
     }
 
     /**
@@ -154,11 +157,11 @@ class Transfer_RestTest extends TestCase
         $this->wallet1->total_deposit = $amount;
         $this->wallet1->total_withdraw = 0.0;
         $this->wallet1->update();
-        
+
         $this->wallet2->total_deposit = 0.0;
         $this->wallet2->total_withdraw = 0.0;
         $this->wallet2->update();
-        
+
         // Create transfer
         $form = array(
             'to_wallet_id' => $this->wallet2->id,
@@ -249,6 +252,53 @@ class Transfer_RestTest extends TestCase
         $this->assertNotNull($response);
         $this->assertEquals($response->status_code, 200);
         Test_Assert::assertResponsePaginateList($response, 'Find result is not JSON paginated list');
+    }
+
+    /**
+     *
+     * @test
+     */
+    public function chargeWalletTest()
+    {
+        $amount = rand();
+        // Reset wallets balances
+        $this->wallet1->total_deposit = 0.0;
+        $this->wallet1->total_withdraw = 0.0;
+        $this->wallet1->update();
+
+        // Create transfer
+        $form = array(
+            'amount' => $amount,
+            'backend' => $this->backend->id,
+            'callback' => 'test.pluf.ir',
+            'description' => 'Charge wallet-1'
+        );
+        $response = $this->client->post('/bank/wallets/' . $this->wallet1->id . '/payments', $form);
+        $this->assertNotNull($response);
+        $this->assertEquals($response->status_code, 200);
+        $receipt = json_decode($response->content, true);
+        Test_Assert::assertNotNull($receipt['id']);
+
+        // Get the payment (it updates balance of the wallet)
+        $response = $this->client->get('/bank/wallets/' . $this->wallet1->id . '/payments/' . $receipt['id']);
+        $this->assertNotNull($response);
+        $this->assertEquals($response->status_code, 200);
+
+        // Check balances
+        $wallet1 = new Bank_Wallet($this->wallet1->id);
+        $this->assertEquals($amount, $wallet1->total_deposit - $wallet1->total_withdraw);
+    }
+    
+    /**
+     *
+     * @test
+     */
+    public function findPaymentsOfWalletTest()
+    {
+        $response = $this->client->get('/bank/wallets/' . $this->wallet1->id . '/payments');
+        $this->assertNotNull($response);
+        $this->assertEquals($response->status_code, 200);
+        Test_Assert::assertResponsePaginateList($response, 'Payments list of wallet is not JSON paginated list');
     }
 }
 

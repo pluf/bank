@@ -6,6 +6,7 @@
 			<directory>tests/Bank_Service/</directory>
 			<directory>tests/Bank_REST/</directory>
 			<directory>tests/Wallet/</directory>
+			<directory>tests/Transfer/</directory>
 		</testsuite>
 	</testsuites>
 
