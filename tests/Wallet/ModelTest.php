@@ -21,8 +21,6 @@ use PHPUnit\Framework\IncompleteTestError;
 
 require_once 'Pluf.php';
 
-Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');
-
 /**
  *
  * @backupGlobals disabled
