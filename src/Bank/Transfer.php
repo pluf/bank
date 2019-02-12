@@ -16,7 +16,7 @@ class Bank_Transfer extends Pluf_Model
      */
     function init()
     {
-        $this->_a['table'] = 'bank_transfer';
+        $this->_a['table'] = 'bank_transfers';
         $this->_a['verbose'] = 'Bank Transfer';
         $this->_a['cols'] = array(
             'id' => array(
