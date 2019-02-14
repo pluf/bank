@@ -50,6 +50,14 @@ class Bank_Engine_BitPay extends Bank_Engine
     {
         return 'Accept payments with one of BitPay\'s';
     }
+    
+    /*
+     *
+     */
+    public function getCurrency()
+    {
+        return 'USD';
+    }
 
     /*
      *
@@ -58,7 +66,7 @@ class Bank_Engine_BitPay extends Bank_Engine
     {
         return array(
             array(
-                'name' => ClientID,
+                'name' => self::ClientID,
                 'type' => 'String',
                 'unit' => 'none',
                 'title' => 'Clien ID',
@@ -73,7 +81,7 @@ class Bank_Engine_BitPay extends Bank_Engine
                 ]
             ),
             array(
-                'name' => ClientSecret,
+                'name' => self::ClientSecret,
                 'type' => 'String',
                 'unit' => 'none',
                 'title' => 'Clien secret',
@@ -87,21 +95,21 @@ class Bank_Engine_BitPay extends Bank_Engine
                     'NotEmpty'
                 ]
             ),
-            array(
-                'name' => Currency,
-                'type' => 'String',
-                'unit' => 'none',
-                'title' => 'Currency',
-                'description' => 'Currency',
-                'editable' => true,
-                'visible' => true,
-                'priority' => 1,
-                'defaultValue' => 'USD',
-                'validators' => [
-                    'NotNull',
-                    'NotEmpty'
-                ]
-            )
+//             array(
+//                 'name' => Currency,
+//                 'type' => 'String',
+//                 'unit' => 'none',
+//                 'title' => 'Currency',
+//                 'description' => 'Currency',
+//                 'editable' => true,
+//                 'visible' => true,
+//                 'priority' => 1,
+//                 'defaultValue' => 'USD',
+//                 'validators' => [
+//                     'NotNull',
+//                     'NotEmpty'
+//                 ]
+//             )
         );
     }
 

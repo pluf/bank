@@ -16,6 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-return array (
-
+return array(
+    'Bank_Wallet' => array(
+        'relate_to' => array(
+            'User_Account'
+        )
+    ),
+    'Bank_Transfer' => array(
+        'relate_to' => array(
+            'User_Account',
+            'Bank_Wallet',
+            'Bank_Receipt'
+        )
+    ),
+    'Bank_Receipt' => array(
+        'relate_to' => array(
+            'Bank_Backend'
+        )
+    )
 );

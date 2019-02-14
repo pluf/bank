@@ -34,6 +34,7 @@ class Bank_Wallet extends Pluf_Model
                 'editable' => true,
                 'readable' => true
             ),
+            // Should be one of currency codes (alphabet code) in the ISO 4217
             'currency' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => false,
@@ -43,7 +44,7 @@ class Bank_Wallet extends Pluf_Model
                 'readable' => true
             ),
             'total_deposit' => array(
-                'type' => 'Pluf_DB_Field_Integer',
+                'type' => 'Pluf_DB_Field_Float',
                 'blank' => false,
                 'is_null' => false,
                 'default' => 0,
@@ -51,7 +52,7 @@ class Bank_Wallet extends Pluf_Model
                 'readable' => true
             ),
             'total_withdraw' => array(
-                'type' => 'Pluf_DB_Field_Integer',
+                'type' => 'Pluf_DB_Field_Float',
                 'blank' => false,
                 'is_null' => false,
                 'default' => 0,
@@ -65,6 +66,13 @@ class Bank_Wallet extends Pluf_Model
                 'size' => 1024,
                 'editable' => true,
                 'readable' => true
+            ),
+            'deleted' => array(
+                'type' => 'Pluf_DB_Field_Boolean',
+                'blank' => false,
+                'default' => false,
+                'readable' => true,
+                'editable' => false
             ),
             'creation_dtime' => array(
                 'type' => 'Pluf_DB_Field_Datetime',

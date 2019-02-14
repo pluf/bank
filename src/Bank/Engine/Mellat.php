@@ -46,6 +46,10 @@ class Bank_Engine_Mellat extends Bank_Engine {
 	    return array();
 	}
 	
+	public function getCurrency(){
+	    return 'IRR';
+	}
+	
 	/**
 	 */
 	public function create($receipt) {

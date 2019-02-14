@@ -16,7 +16,7 @@ class Bank_Transfer extends Pluf_Model
      */
     function init()
     {
-        $this->_a['table'] = 'bank_transfer';
+        $this->_a['table'] = 'bank_transfers';
         $this->_a['verbose'] = 'Bank Transfer';
         $this->_a['cols'] = array(
             'id' => array(
@@ -28,10 +28,10 @@ class Bank_Transfer extends Pluf_Model
             ),
             // It should be a positive value
             'amount' => array(
-                'type' => 'Pluf_DB_Field_Integer',
+                'type' => 'Pluf_DB_Field_Float',
                 'blank' => false,
                 'is_null' => false,
-                'default' => 0,
+                'default' => 0.0,
                 'editable' => false,
                 'readable' => true
             ),
@@ -67,8 +67,8 @@ class Bank_Transfer extends Pluf_Model
             'from_wallet_id' => array(
                 'type' => 'Pluf_DB_Field_Foreignkey',
                 'model' => 'Bank_Wallet',
-                'blank' => false,
-                'is_null' => false,
+                'blank' => true,
+                'is_null' => true,
                 'name' => 'from_wallet',
                 'graphql_name' => 'from_wallet',
                 'relate_name' => 'withdrawals',
@@ -85,19 +85,38 @@ class Bank_Transfer extends Pluf_Model
                 'relate_name' => 'deposits',
                 'editable' => false,
                 'readable' => true
+            ),
+            'receipt_id' => array(
+                'type' => 'Pluf_DB_Field_Foreignkey',
+                'model' => 'Bank_Receipt',
+                'blank' => true,
+                'is_null' => true,
+                'name' => 'receipt',
+                'graphql_name' => 'receipt',
+                'relate_name' => 'transfer',
+                'editable' => false,
+                'readable' => true
             )
         );
 
-//         $this->_a['idx'] = array(
-//             'transfer_acting_idx' => array(
-//                 'col' => 'acting_id',
-//                 'type' => 'normal', // normal, unique, fulltext, spatial
-//                 'index_type' => '', // hash, btree
-//                 'index_option' => '',
-//                 'algorithm_option' => '',
-//                 'lock_option' => ''
-//             )
-//         );
+        $this->_a['idx'] = array(
+            'transfer_acting_idx' => array(
+                'col' => 'acting_id',
+                'type' => 'normal', // normal, unique, fulltext, spatial
+                'index_type' => '', // hash, btree
+                'index_option' => '',
+                'algorithm_option' => '',
+                'lock_option' => ''
+            ),
+            'transfer_from_wallet_idx' => array(
+                'col' => 'from_wallet_id',
+                'type' => 'normal', // normal, unique, fulltext, spatial
+            ),
+            'transfer_to_wallet_idx' => array(
+                'col' => 'to_wallet_id',
+                'type' => 'normal', // normal, unique, fulltext, spatial
+            )
+        );
     }
 
     /**

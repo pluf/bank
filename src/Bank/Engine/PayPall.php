@@ -51,6 +51,10 @@ class Bank_Engine_PayPall extends Bank_Engine
         return 'Accept payments with one of PayPal\'s';
     }
 
+    public function getCurrency(){
+        return 'USD';
+    }
+    
     /*
      *
      */
@@ -58,7 +62,7 @@ class Bank_Engine_PayPall extends Bank_Engine
     {
         return array(
             array(
-                'name' => ClientID,
+                'name' => self::ClientID,
                 'type' => 'String',
                 'unit' => 'none',
                 'title' => 'Clien ID',
@@ -73,7 +77,7 @@ class Bank_Engine_PayPall extends Bank_Engine
                 ]
             ),
             array(
-                'name' => ClientSecret,
+                'name' => self::ClientSecret,
                 'type' => 'String',
                 'unit' => 'none',
                 'title' => 'Clien secret',
@@ -88,7 +92,7 @@ class Bank_Engine_PayPall extends Bank_Engine
                 ]
             ),
             array(
-                'name' => Currency,
+                'name' => self::Currency,
                 'type' => 'String',
                 'unit' => 'none',
                 'title' => 'Currency',
