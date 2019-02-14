@@ -61,7 +61,6 @@ class Bank_Views_Transfer extends Pluf_Views
             throw new Pluf_Exception_BadRequest('Invalid transfer. Source and destination wallet of transfer could not be same.');
         }
         // Check currency of wallets
-        Pluf::loadFunction('Bank_Shortcuts_IsCurrenciesCompatible');
         if ($fromWallet->currency !== $toWallet->currency) {
             throw new Pluf_Exception_BadRequest('Invalid transfer. Could not transfer between wallets with different currency.');
         }
