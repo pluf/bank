@@ -103,7 +103,7 @@ class Bank_Views_Transfer extends Pluf_Views
         if ($request->user->getId() !== $wallet->owner_id && ! User_Precondition::isOwner($request)) {
             throw new Pluf_Exception_PermissionDenied("Permission is denied");
         }
-        $where = new Pluf_SQL('`from_wallet_id`=%s OR `to_wallet_id`=%s', array(
+        $where = new Pluf_SQL('(`from_wallet_id`=%s OR `to_wallet_id`=%s) AND `receipt_id`=0', array(
             $wallet->id,
             $wallet->id
         ));
@@ -138,7 +138,7 @@ class Bank_Views_Transfer extends Pluf_Views
      * @param array $match
      * @throws Pluf_Exception_BadRequest
      * @throws Pluf_Exception_DoesNotExist
-     * @return Bank_Receipt
+     * @return Bank_Transfer
      */  
     public function createPayment($request, $match)
     {
@@ -180,7 +180,26 @@ class Bank_Views_Transfer extends Pluf_Views
             'backend_id' => $backend->id
         );
         $payment = Bank_Service::create($receiptData, 'bank-wallet', $toWallet->id);
-        return $payment;
+        // Create transfer
+        $transfer = new Bank_Transfer();
+        $transfer->_a['cols']['amount']['editable'] = true;
+        $transfer->_a['cols']['acting_id']['editable'] = true;
+        $transfer->_a['cols']['receipt_id']['editable'] = true;
+        $transfer->_a['cols']['to_wallet_id']['editable'] = true;
+        // Convert amount from backend currency to wallet currency
+        $amount = Bank_Shortcuts_ConvertCurrency($payment->amount, $payment->get_backend()->currency, 
+            $toWallet->currency);
+        Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');
+        $data = array(
+            'amount' => $amount,
+            'acting_id' => $request->user->id,
+            'receipt_id' => $payment->id,
+            'to_wallet_id' => $toWallet->id,
+            'description' => $payment->description
+        );
+        $form = Pluf_Shortcuts_GetFormForModel($transfer, $data);
+        $transfer = $form->save();       
+        return $transfer;
     }
     
     /**
@@ -190,7 +209,7 @@ class Bank_Views_Transfer extends Pluf_Views
      * @param array $match
      * @throws Pluf_Exception_PermissionDenied
      * @throws Pluf_Exception_DoesNotExist
-     * @return Pluf_Model|Bank_Receipt
+     * @return Bank_Transfer
      */
     public function getPayment($request, $match)
     {
@@ -201,48 +220,32 @@ class Bank_Views_Transfer extends Pluf_Views
             throw new Pluf_Exception_PermissionDenied("Permission is denied");
         }
         // Check payment
-        $payment = Pluf_Shortcuts_GetObjectOr404('Bank_Receipt', $match['modelId']);
+        $transfer = Pluf_Shortcuts_GetObjectOr404('Bank_Transfer', $match['modelId']);
+        $payment = Pluf_Shortcuts_GetObjectOr404('Bank_Receipt', $transfer->receipt_id);
         if ($payment->owner_id !== 'bank-wallet' && $payment->owner_id !== $wallet->id) {
             throw new Pluf_Exception_DoesNotExist('The payment is not blong to the wallet.');
         }
         $preState = $payment->id >= 0 && $payment->isPayed();
         if($preState){
-            return $payment;
+            return $transfer;
         }
         $payment = Bank_Service::update($payment);
         $paid = $payment->isPayed();
         if (! $preState && $paid){
-            // The payment is payed and it is first time that we inform about it
-            // Create transfer
-            $transfer = new Bank_Transfer();
-            $transfer->_a['cols']['amount']['editable'] = true;
-            $transfer->_a['cols']['acting_id']['editable'] = true;
-            $transfer->_a['cols']['receipt_id']['editable'] = true;
-            $transfer->_a['cols']['to_wallet_id']['editable'] = true;
-            // Convert amount from backend currency to wallet currency
-            Pluf::loadFunction('Bank_Shortcuts_ConvertCurrency');
-            $amount = Bank_Shortcuts_ConvertCurrency($payment->amount, $payment->get_backend()->currency, $wallet->currency);
-            Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');
-            $data = array(
-                'amount' => $amount,
-                'acting_id' => $request->user->id,
-                'receipt_id' => $payment->id,
-                'to_wallet_id' => $wallet->id,
-                'description' => $payment->description
-            );
-            $form = Pluf_Shortcuts_GetFormForModel($transfer, $data);
-            $transfer = $form->save();
+            // The payment is payed and it is first time that we inform about it.
             // Update balance of wallet
             $wallet->total_deposit += $transfer->amount;
             $wallet->update();
         }
-        return $payment;
+        return $transfer;
     }
     
     /**
-     *
+     * 
      * @param Pluf_HTTP_Request $request
      * @param array $match
+     * @throws Pluf_Exception_PermissionDenied
+     * @return Pluf_Paginator
      */
     public function findPayments($request, $match)
     {
@@ -251,14 +254,15 @@ class Bank_Views_Transfer extends Pluf_Views
         if ($request->user->getId() !== $wallet->owner_id && ! User_Precondition::isOwner($request)) {
             throw new Pluf_Exception_PermissionDenied("Permission is denied");
         }
-        $where = new Pluf_SQL('`owner_id`=%s AND `owner_class`=%s', array(
-            $wallet->id,
-            'bank-wallet'
+        $where = new Pluf_SQL('`to_wallet_id`=%s AND `receipt_id`<>0', array(
+            $wallet->id
         ));
         $p = array(
-            'model' => 'Bank_Receipt',
+            'model' => 'Bank_Transfer',
             'sql' => $where
         );
         return parent::findObject($request, $match, $p);
     }
 }
+
+
