@@ -11,6 +11,7 @@ return array(
         )
     ),
     array(
+        // TODO: hadi 1397-12-4: remove feild receipt_id from schema
         'regex' => '#^/wallets/(?P<parentId>\d+)/transfers/schema$#',
         'model' => 'Pluf_Views',
         'method' => 'getSchema',
@@ -20,12 +21,13 @@ return array(
         )
     ),
     array(
+    // TODO: hadi 1397-12-4: remove feild from_wallet_id from schema
         'regex' => '#^/wallets/(?P<parentId>\d+)/payments/schema$#',
         'model' => 'Pluf_Views',
         'method' => 'getSchema',
         'http-method' => 'GET',
         'params' => array(
-            'model' => 'Bank_Receipt'
+            'model' => 'Bank_Transfer'
         )
     ),
     // ************************************************************* Wallet

@@ -112,4 +112,7 @@ class Bank_Views_Wallet extends Pluf_Views
             'model' => 'Bank_Wallet'
         ));
     }
+
 }
+
+
