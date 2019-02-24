@@ -77,6 +77,9 @@ class Bank_Service
         if ($owner instanceof Pluf_Model) { // Pluf module
             $receipt->owner_class = $owner->getClass();
             $receipt->owner_id = $owner->getId();
+            // Replace variables in the callback URL
+            $m = new Mustache_Engine();
+            $receipt->callbackURL = $m->render($receipt->callbackURL, $receipt->_data);
         } elseif (! is_null($owner)) { // module
             $receipt->owner_class = $owner;
             $receipt->owner_id = $ownerId;
@@ -113,8 +116,8 @@ class Bank_Service
     /**
      * Finds recepts
      *
-     * @param Plfu_Model $owner
-     * @param unknown $ownerId
+     * @param Pluf_Model $owner
+     * @param integer $ownerId
      */
     public static function find($owner, $ownerId = null)
     {

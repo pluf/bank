@@ -179,7 +179,7 @@ class Bank_Views_Transfer extends Pluf_Views
             'callbackURL' => $request->REQUEST['callback'],
             'backend_id' => $backend->id
         );
-        $payment = Bank_Service::create($receiptData, 'bank-wallet', $toWallet->id);
+        $payment = Bank_Service::create($receiptData, $toWallet);
         // Create transfer
         $transfer = new Bank_Transfer();
         $transfer->_a['cols']['amount']['editable'] = true;
