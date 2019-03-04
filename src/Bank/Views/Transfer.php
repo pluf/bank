@@ -88,6 +88,20 @@ class Bank_Views_Transfer extends Pluf_Views
         $fromWallet->update();
         $toWallet->total_deposit += $transfer->amount;
         $toWallet->update();
+
+        // Notify user
+        if (! Pluf::f('test_unit', false)) {
+            $context = array(
+                'fromWallet' => $fromWallet,
+                'toWallet' => $toWallet,
+                'user' => $request->user,
+                'transfer' => $transfer
+            );
+            User_Notify::push($request->user, array(
+                'Message' => 'Bank/Message/wallet-transfer.txt'
+            ), $context);
+        }
+
         return $transfer;
     }
 
@@ -134,12 +148,13 @@ class Bank_Views_Transfer extends Pluf_Views
     }
 
     /**
+     *
      * @param Pluf_HTTP_Request $request
      * @param array $match
      * @throws Pluf_Exception_BadRequest
      * @throws Pluf_Exception_DoesNotExist
      * @return Bank_Transfer
-     */  
+     */
     public function createPayment($request, $match)
     {
         // Check wallet and permissions to access wallet
@@ -156,14 +171,14 @@ class Bank_Views_Transfer extends Pluf_Views
         // Check bank backend and currencies
         $backend = Pluf_Shortcuts_GetObjectOr404('Bank_Backend', $request->REQUEST['backend']);
         Pluf::loadFunction('Bank_Shortcuts_IsCurrenciesCompatible');
-        if (!Bank_Shortcuts_IsCurrenciesCompatible($backend->currency, $toWallet->currency)) {
+        if (! Bank_Shortcuts_IsCurrenciesCompatible($backend->currency, $toWallet->currency)) {
             throw new Pluf_Exception_BadRequest('Invalid payment. Could not transfer between bank backend and wallet with different currency.');
         }
         $title = array_key_exists('title', $request->REQUEST) ? $request->REQUEST['title'] : 'Charge wallet ' . $toWallet->id;
         $description = array_key_exists('description', $request->REQUEST) ? $request->REQUEST['description'] : null;
         $email = '';
         $profiles = $request->user->get_profiles_list();
-        if($profiles && $profiles->count() > 0){
+        if ($profiles && $profiles->count() > 0) {
             $email = $profiles[0]->public_email;
         }
         // Create payment
@@ -187,8 +202,7 @@ class Bank_Views_Transfer extends Pluf_Views
         $transfer->_a['cols']['receipt_id']['editable'] = true;
         $transfer->_a['cols']['to_wallet_id']['editable'] = true;
         // Convert amount from backend currency to wallet currency
-        $amount = Bank_Shortcuts_ConvertCurrency($payment->amount, $payment->get_backend()->currency, 
-            $toWallet->currency);
+        $amount = Bank_Shortcuts_ConvertCurrency($payment->amount, $payment->get_backend()->currency, $toWallet->currency);
         Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');
         $data = array(
             'amount' => $amount,
@@ -198,13 +212,14 @@ class Bank_Views_Transfer extends Pluf_Views
             'description' => $payment->description
         );
         $form = Pluf_Shortcuts_GetFormForModel($transfer, $data);
-        $transfer = $form->save();       
+        $transfer = $form->save();
         return $transfer;
     }
-    
+
     /**
-     * Returns the payment with given id. It also creates a transfer if payment is successfully payed.
-     * 
+     * Returns the payment with given id.
+     * It also creates a transfer if payment is successfully payed.
+     *
      * @param Pluf_HTTP_Request $request
      * @param array $match
      * @throws Pluf_Exception_PermissionDenied
@@ -226,22 +241,34 @@ class Bank_Views_Transfer extends Pluf_Views
             throw new Pluf_Exception_DoesNotExist('The payment is not blong to the wallet.');
         }
         $preState = $payment->id >= 0 && $payment->isPayed();
-        if($preState){
+        if ($preState) {
             return $transfer;
         }
         $payment = Bank_Service::update($payment);
         $paid = $payment->isPayed();
-        if (! $preState && $paid){
+        if (! $preState && $paid) {
             // The payment is payed and it is first time that we inform about it.
             // Update balance of wallet
             $wallet->total_deposit += $transfer->amount;
             $wallet->update();
+            // Notify user
+            if (! Pluf::f('test_unit', false)) {
+                $context = array(
+                    'wallet' => $wallet,
+                    'user' => $request->user,
+                    'receipt' => $payment,
+                    'transfer' => $transfer
+                );
+                User_Notify::push($request->user, array(
+                    'Message' => 'Bank/Message/wallet-charge.txt'
+                ), $context);
+            }
         }
         return $transfer;
     }
-    
+
     /**
-     * 
+     *
      * @param Pluf_HTTP_Request $request
      * @param array $match
      * @throws Pluf_Exception_PermissionDenied

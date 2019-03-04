@@ -1,0 +1,3 @@
+Amount {$transfer->amount} {$fromWallet->currency} is transfered 
+from wallet {$fromWallet->id}
+to wallet {$toWallet->id} by {$user->login}.
