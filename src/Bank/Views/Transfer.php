@@ -97,7 +97,10 @@ class Bank_Views_Transfer extends Pluf_Views
                 'user' => $request->user,
                 'transfer' => $transfer
             );
-            User_Notify::push($request->user, array(
+            User_Notify::push($fromWallet->get_owner(), array(
+                'Message' => 'Bank/Message/wallet-transfer.txt'
+            ), $context);
+            User_Notify::push($toWallet->get_owner(), array(
                 'Message' => 'Bank/Message/wallet-transfer.txt'
             ), $context);
         }
@@ -259,7 +262,7 @@ class Bank_Views_Transfer extends Pluf_Views
                     'receipt' => $payment,
                     'transfer' => $transfer
                 );
-                User_Notify::push($request->user, array(
+                User_Notify::push($wallet->get_owner(), array(
                     'Message' => 'Bank/Message/wallet-charge.txt'
                 ), $context);
             }
