@@ -79,7 +79,7 @@ class Bank_Service
             $receipt->owner_id = $owner->getId();
             // Replace variables in the callback URL
             $m = new Mustache_Engine();
-            $receipt->callbackURL = $m->render($receipt->callbackURL, $receipt->_data);
+            $receipt->callbackURL = $m->render($receipt->callbackURL, $receipt->getData());
         } elseif (! is_null($owner)) { // module
             $receipt->owner_class = $owner;
             $receipt->owner_id = $ownerId;

@@ -1,0 +1,3 @@
+The wallet {$wallet->id} is charged successfully
+about {$transfer->amount} {$wallet->currency} by
+receipt id {$receipt->id}.
