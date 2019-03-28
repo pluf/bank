@@ -19,7 +19,7 @@ return array(
         'params' => array(
             'model' => 'Bank_Backend',
             'view' => 'global',
-            'sql' => 'deleted=false'
+            'sql' => new Pluf_SQL('deleted=%s', array(FALSE))
         )
     ),
     array(
