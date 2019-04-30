@@ -18,7 +18,7 @@ CREATE TABLE `bank_wallets` (
   KEY `wallet_owner_idx` (`tenant`,`owner_id`),
   KEY `owner_id_foreignkey_idx` (`owner_id`),
   KEY `tenant_foreignkey_idx` (`tenant`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `bank_transfers` (
   `id` mediumint(9) unsigned NOT NULL AUTO_INCREMENT,
@@ -39,5 +39,5 @@ CREATE TABLE `bank_transfers` (
   KEY `to_wallet_id_foreignkey_idx` (`to_wallet_id`),
   KEY `receipt_id_foreignkey_idx` (`receipt_id`),
   KEY `tenant_foreignkey_idx` (`tenant`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
