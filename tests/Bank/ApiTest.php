@@ -21,6 +21,7 @@ use PHPUnit\Framework\TestCase;
 require_once 'Pluf.php';
 
 /**
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
  */
@@ -28,17 +29,51 @@ class Bank_ApiTest extends TestCase
 {
 
     /**
-     * @before
+     *
+     * @beforeClass
      */
-    public function setUp ()
+    public static function createDataBase()
     {
-        Pluf::start(__DIR__. '/../conf/config.php');
+        Pluf::start(__DIR__ . '/../conf/config.php');
+        $m = new Pluf_Migration(Pluf::f('installed_apps', array()));
+        $m->install();
+
+        // Test user
+        $user = new User_Account();
+        $user->login = 'test';
+        $user->is_active = true;
+        if (true !== $user->create()) {
+            throw new Exception();
+        }
+        // Credential of user
+        $credit = new User_Credential();
+        $credit->setFromFormData(array(
+            'account_id' => $user->id
+        ));
+        $credit->setPassword('test');
+        if (true !== $credit->create()) {
+            throw new Exception();
+        }
+
+        $per = User_Role::getFromString('tenant.owner');
+        $user->setAssoc($per);
     }
 
     /**
+     *
+     * @afterClass
+     */
+    public static function removeDatabses()
+    {
+        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m->unInstall();
+    }
+
+    /**
+     *
      * @test
      */
-    public function testClassInstance ()
+    public function testClassInstance()
     {
         $object = new Bank_Backend();
         $this->assertTrue(isset($object), 'Bank_Backend could not be created!');
@@ -64,7 +99,78 @@ class Bank_ApiTest extends TestCase
         $this->assertTrue(isset($object), 'Bank_Transfer could not be created!');
         $object = new Bank_Wallet();
         $this->assertTrue(isset($object), 'Bank_Wallet could not be created!');
-        
+    }
+
+    /**
+     * Create a recept by paypall
+     *
+     * @test
+     */
+    public function testCreatePayPallRecept()
+    {
+        // create backend
+        $backendData = new Bank_Backend();
+        $backendData->engine = 'paypall';
+        $backendData->currency = 'USD';
+        $backendData->setMeta('ClientId', 'yyy');
+        $backendData->setMeta('ClientSecret', 'xxxx');
+        $backendData->deleted = false;
+        $backendData->create();
+
+        $rec = Bank_Service::create(array(
+            'title' => 'title test',
+            'description' => 'description',
+            'email' => 'maso@dpq.co.ir',
+            'phone' => '+989177374087',
+            'callbackURL' => 'http://localhost',
+            'backend_id' => $backendData->id,
+            'amount' => 100
+        ));
+
+        $backend = new Bank_Engine_PayPall();
+        $backend->create($rec);
+
+        $rec->delete();
+        $backendData->delete();
+    }
+
+
+    /**
+     * Execute a recept by paypall
+     *
+     * @test
+     */
+    public function testExecutePayPallRecept()
+    {
+        // create backend
+        $backendData = new Bank_Backend();
+        $backendData->engine = 'paypall';
+        $backendData->currency = 'USD';
+        $backendData->setMeta('ClientId', 'yyy');
+        $backendData->setMeta('ClientSecret', 'xxxx');
+        $backendData->deleted = false;
+        $backendData->create();
+
+        $rec = Bank_Service::create(array(
+            'title' => 'title test',
+            'description' => 'description',
+            'email' => 'maso@dpq.co.ir',
+            'phone' => '+989177374087',
+            'callbackURL' => 'http://localhost',
+            'backend_id' => $backendData->id,
+            'amount' => 100
+        ));
+
+        $backend = new Bank_Engine_PayPall();
+        $backend->create($rec);
+        $rec->update();
+
+        $backend = new Bank_Engine_PayPall();
+        $backend->create($rec);
+        $rec->update();
+
+        $rec->delete();
+        $backendData->delete();
     }
 }
 

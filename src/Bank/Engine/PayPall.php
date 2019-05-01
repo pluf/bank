@@ -21,13 +21,15 @@
 /**
  * PayPall Engine
  *
+ *
+ * @see https://github.com/paypal/PayPal-PHP-SDK
  * @author maso<mostafa.barmshory@dpq.co.ir>
- *        
+ *
  */
 class Bank_Engine_PayPall extends Bank_Engine
 {
 
-    const ClientID = 'ClientID';
+    const ClientID = 'ClientId';
 
     const ClientSecret = 'ClientSecret';
 
@@ -54,7 +56,7 @@ class Bank_Engine_PayPall extends Bank_Engine
     public function getCurrency(){
         return 'USD';
     }
-    
+
     /*
      *
      */
@@ -109,21 +111,108 @@ class Bank_Engine_PayPall extends Bank_Engine
         );
     }
 
-    /*
+    /**
+     * Create new recept
+     *
+     * @param Bank_Recept $receipt
+     * @throws Bank_Exception
      */
     public function create($receipt)
     {
-        // https://github.com/paypal/PayPal-PHP-SDK/wiki/Making-First-Call
-        // Redirect to URL You can do it also by creating a form
-        throw new Bank_Exception('Not supported');
+
+        $backend = $receipt->get_backend();
+        $clientId = $backend->getMeta(self::ClientID, null);
+        $clientSecret = $receipt->getMeta(self::ClientSecret, null);
+        $currency = $receipt->getMeta(self::Currency, 'USD');
+
+        // After Step 1
+        $apiContext = new \PayPal\Rest\ApiContext(
+            new \PayPal\Auth\OAuthTokenCredential(
+                $clientId,     // ClientID
+                $clientSecret  // ClientSecret
+            )
+        );
+
+        // After Step 2
+        $payer = new \PayPal\Api\Payer();
+        $payer->setPaymentMethod('paypal');
+
+        $amount = new \PayPal\Api\Amount();
+        $amount->setTotal($receipt->amount);
+        $amount->setCurrency($currency);
+
+        $transaction = new \PayPal\Api\Transaction();
+        $transaction->setAmount($amount);
+
+        $redirectUrls = new \PayPal\Api\RedirectUrls();
+        $redirectUrls
+            ->setReturnUrl($receipt->callbackURL)
+            ->setCancelUrl($receipt->callbackURL);
+
+        $payment = new \PayPal\Api\Payment();
+        $payment
+            ->setIntent('sale')
+            ->setPayer($payer)
+            ->setTransactions(array($transaction))
+            ->setRedirectUrls($redirectUrls);
+
+        // debug
+        if (Pluf::f('bank_debug', false)) {
+            $receipt->setMeta('paymentId', 'id');
+            $receipt->setMeta('intent', 'intent');
+            $receipt->callURL = 'https://www.paypall.com/pg/StartPay/example';
+            return;
+        }
+        // After Step 3
+        try {
+            $response = $payment->create($apiContext);
+            $receipt->setMeta('orderId', $response->result->id);
+            $receipt->setMeta('intent', $response->result->intent);
+            $receipt->callURL = $payment->getApprovalLink();
+            return;
+        } catch (Exception $ex) {
+            // This will print the detailed information on the exception.
+            //REALLY HELPFUL FOR DEBUGGING
+            throw new Bank_Exception($ex->getData());
+        }
     }
 
     /**
+     * Update state of the Recept
+     *
+     * @param Bank_Recept $receipt
+     * @throws Bank_Exception
      */
     public function update($receipt)
     {
-        // https://github.com/paypal/PayPal-PHP-SDK/wiki/Making-First-Call
-        // Redirect to URL You can do it also by creating a form
-        throw new Bank_Exception('Not supported');
+        $backend = $receipt->get_backend();
+        $clientId = $backend->getMeta(self::ClientID, null);
+        $clientSecret = $receipt->getMeta(self::ClientSecret, null);
+        $paymentId = $receipt->setMeta('paymentId', 'id');
+
+        // After Step 1
+        $apiContext = new \PayPal\Rest\ApiContext(
+            new \PayPal\Auth\OAuthTokenCredential(
+                $clientId,     // ClientID
+                $clientSecret  // ClientSecret
+                )
+            );
+
+        $payment = \PayPal\Api\Payment::get($paymentId, $apiContext);
+
+        $execution = new \PayPal\Api\PaymentExecution();
+        $execution->setPayerId($paymentId);
+
+        try {
+            // Execute the payment
+            $result = $payment->execute($execution, $apiContext);
+            if($result->getState() === 'approved') {
+                $receipt->payRef = $payment->id;
+            }
+            return true;
+        } catch (Exception $ex) {
+            throw new Bank_Exception($ex);
+        }
+        return false;
     }
 }
