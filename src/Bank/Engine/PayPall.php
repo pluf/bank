@@ -29,7 +29,7 @@
 class Bank_Engine_PayPall extends Bank_Engine
 {
 
-    const ClientID = 'ClientId';
+    const ClientID = 'ClientID';
 
     const ClientSecret = 'ClientSecret';
 
@@ -122,7 +122,7 @@ class Bank_Engine_PayPall extends Bank_Engine
 
         $backend = $receipt->get_backend();
         $clientId = $backend->getMeta(self::ClientID, null);
-        $clientSecret = $receipt->getMeta(self::ClientSecret, null);
+        $clientSecret = $backend->getMeta(self::ClientSecret, null);
         $currency = $receipt->getMeta(self::Currency, 'USD');
 
         // After Step 1
@@ -166,14 +166,18 @@ class Bank_Engine_PayPall extends Bank_Engine
         // After Step 3
         try {
             $response = $payment->create($apiContext);
-            $receipt->setMeta('orderId', $response->result->id);
-            $receipt->setMeta('intent', $response->result->intent);
+            // TODO: Check that state is 'created'
+            if($response->getState() !== 'created'){
+                throw new Bank_Exception('Payment is not created. The state is: ' . $response->getState());
+            }
+            $receipt->setMeta('paymentId', $response->getId());
+            $receipt->setMeta('intent', $response->getIntent());
             $receipt->callURL = $payment->getApprovalLink();
-            return;
+            return $receipt;
         } catch (Exception $ex) {
             // This will print the detailed information on the exception.
             //REALLY HELPFUL FOR DEBUGGING
-            throw new Bank_Exception($ex->getData());
+            throw new Bank_Exception($ex->getMessage());
         }
     }
 
@@ -187,8 +191,8 @@ class Bank_Engine_PayPall extends Bank_Engine
     {
         $backend = $receipt->get_backend();
         $clientId = $backend->getMeta(self::ClientID, null);
-        $clientSecret = $receipt->getMeta(self::ClientSecret, null);
-        $paymentId = $receipt->setMeta('paymentId', 'id');
+        $clientSecret = $backend->getMeta(self::ClientSecret, null);
+        $paymentId = $receipt->getMeta('paymentId', 'id');
 
         // After Step 1
         $apiContext = new \PayPal\Rest\ApiContext(
@@ -201,7 +205,7 @@ class Bank_Engine_PayPall extends Bank_Engine
         $payment = \PayPal\Api\Payment::get($paymentId, $apiContext);
 
         $execution = new \PayPal\Api\PaymentExecution();
-        $execution->setPayerId($paymentId);
+        $execution->setPayerId($payment->getPayer()->getPayerInfo()->getPayerId());
 
         try {
             // Execute the payment
