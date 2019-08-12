@@ -71,13 +71,6 @@ class Bank_Service
     {
         $form = new Bank_Form_ReceiptNew($param);
         $receipt = $form->save();
-        // Replace variables in the callback URL
-        $m = new Mustache_Engine();
-        $receipt->callbackURL = $m->render($receipt->callbackURL, $receipt->getData());
-        // Request to engine to create receipt
-        $backend = $receipt->get_backend();
-        $engine = $backend->get_engine();
-        $engine->create($receipt);
         if ($owner instanceof Pluf_Model) { // Pluf module
             $receipt->owner_class = $owner->getClass();
             $receipt->owner_id = $owner->getId();
@@ -85,6 +78,13 @@ class Bank_Service
             $receipt->owner_class = $owner;
             $receipt->owner_id = $ownerId;
         }
+        // Replace variables in the callback URL
+        $m = new Mustache_Engine();
+        $receipt->callbackURL = $m->render($receipt->callbackURL, $receipt->getData());
+        // Request to engine to create receipt
+        $backend = $receipt->get_backend();
+        $engine = $backend->get_engine();
+        $engine->create($receipt);
         $receipt->update();
         return $receipt;
     }
