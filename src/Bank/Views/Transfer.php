@@ -179,14 +179,28 @@ class Bank_Views_Transfer extends Pluf_Views
         }
         $title = array_key_exists('title', $request->REQUEST) ? $request->REQUEST['title'] : 'Charge wallet ' . $toWallet->id;
         $description = array_key_exists('description', $request->REQUEST) ? $request->REQUEST['description'] : null;
+        // Create transfer
+        $transfer = new Bank_Transfer();
+        $transfer->_a['cols']['amount']['editable'] = true;
+        $transfer->_a['cols']['acting_id']['editable'] = true;
+        $transfer->_a['cols']['to_wallet_id']['editable'] = true;
+        Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');
+        $data = array(
+            'amount' => $amount,
+            'acting_id' => $request->user->id,
+            'to_wallet_id' => $toWallet->id,
+            'description' => $description
+        );
+        $form = Pluf_Shortcuts_GetFormForModel($transfer, $data);
+        $transfer = $form->save();
+        // Create payment
+        Pluf::loadFunction('Bank_Shortcuts_ConvertCurrency');
+        $amount = Bank_Shortcuts_ConvertCurrency($amount, $toWallet->currency, $backend->currency);
         $email = '';
         $profiles = $request->user->get_profiles_list();
         if ($profiles && $profiles->count() > 0) {
             $email = $profiles[0]->public_email;
         }
-        // Create payment
-        Pluf::loadFunction('Bank_Shortcuts_ConvertCurrency');
-        $amount = Bank_Shortcuts_ConvertCurrency($amount, $toWallet->currency, $backend->currency);
         $receiptData = array(
             // The amount is based on currency of bank backend
             'amount' => $amount,
@@ -197,25 +211,10 @@ class Bank_Views_Transfer extends Pluf_Views
             'callbackURL' => $request->REQUEST['callback'],
             'backend_id' => $backend->id
         );
-        $payment = Bank_Service::create($receiptData, $toWallet);
-        // Create transfer
-        $transfer = new Bank_Transfer();
-        $transfer->_a['cols']['amount']['editable'] = true;
-        $transfer->_a['cols']['acting_id']['editable'] = true;
-        $transfer->_a['cols']['receipt_id']['editable'] = true;
-        $transfer->_a['cols']['to_wallet_id']['editable'] = true;
-        // Convert amount from backend currency to wallet currency
-        $amount = Bank_Shortcuts_ConvertCurrency($payment->amount, $payment->get_backend()->currency, $toWallet->currency);
-        Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');
-        $data = array(
-            'amount' => $amount,
-            'acting_id' => $request->user->id,
-            'receipt_id' => $payment->id,
-            'to_wallet_id' => $toWallet->id,
-            'description' => $payment->description
-        );
-        $form = Pluf_Shortcuts_GetFormForModel($transfer, $data);
-        $transfer = $form->save();
+        $payment = Bank_Service::create($receiptData, $transfer);
+        // Set payment id in the transfer
+        $transfer->receipt_id = $payment;
+        $transfer->update();
         return $transfer;
     }
 
@@ -239,10 +238,10 @@ class Bank_Views_Transfer extends Pluf_Views
         }
         // Check payment
         $transfer = Pluf_Shortcuts_GetObjectOr404('Bank_Transfer', $match['modelId']);
-        $payment = Pluf_Shortcuts_GetObjectOr404('Bank_Receipt', $transfer->receipt_id);
-        if ($payment->owner_id !== 'bank-wallet' && $payment->owner_id !== $wallet->id) {
+        if ($transfer->from_wallet_id !== $wallet->id && $transfer->to_wallet_id !== $wallet->id) {
             throw new Pluf_Exception_DoesNotExist('The payment is not blong to the wallet.');
         }
+        $payment = Pluf_Shortcuts_GetObjectOr404('Bank_Receipt', $transfer->receipt_id);
         $preState = $payment->id >= 0 && $payment->isPayed();
         if ($preState) {
             return $transfer;
