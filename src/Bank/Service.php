@@ -46,7 +46,7 @@ class Bank_Service
      * 'email' => 'user@email.address',
      * 'phone' => '0917222222',
      * 'callbackURL' => 'http://.....',
-     * 'backend' => 2
+     * 'backend_id' => 2
      * );
      * </code></pre>
      *
@@ -57,7 +57,7 @@ class Bank_Service
      * <li>email: رایانامه مشتری</li>
      * <li>phone: شماره تماس مشتری</li>
      * <li>callbackURL: آدرسی که بعد از تکمیل باید فراخوانی شود</li>
-     * <li>*backend: درگاه پرداخت مورد نظر</li>
+     * <li>backend: درگاه پرداخت مورد نظر</li>
      * </ul>
      *
      * در نهایت باید موجودیتی تعیین بشه که این پرداخت رو می‌خواهیم براش ایجاد
@@ -71,13 +71,6 @@ class Bank_Service
     {
         $form = new Bank_Form_ReceiptNew($param);
         $receipt = $form->save();
-        // Replace variables in the callback URL
-        $m = new Mustache_Engine();
-        $receipt->callbackURL = $m->render($receipt->callbackURL, $receipt->getData());
-        // Request to engine to create receipt
-        $backend = $receipt->get_backend();
-        $engine = $backend->get_engine();
-        $engine->create($receipt);
         if ($owner instanceof Pluf_Model) { // Pluf module
             $receipt->owner_class = $owner->getClass();
             $receipt->owner_id = $owner->getId();
@@ -85,6 +78,13 @@ class Bank_Service
             $receipt->owner_class = $owner;
             $receipt->owner_id = $ownerId;
         }
+        // Replace variables in the callback URL
+        $m = new Mustache_Engine();
+        $receipt->callbackURL = $m->render($receipt->callbackURL, $receipt->getData());
+        // Request to engine to create receipt
+        $backend = $receipt->get_backend();
+        $engine = $backend->get_engine();
+        $engine->create($receipt);
         $receipt->update();
         return $receipt;
     }
@@ -95,6 +95,9 @@ class Bank_Service
      * زمانی که یک پرداخت ایجاد می‌شود نیاز هست که بررسی کنیم که آیا پرداخت در
      * سمت بانک انجام شده است. این فراخوانی این بررسی رو انجام می‌ده و حالت
      * پرداخت رو به روز می‌کنه.
+     * 
+     * در صورتی که مشکلی در به روزرسانی حالت پرداخت به وجود آید مثلا بک‌اند مربوط به پرداخت 
+     * از سیستم حذف شده باشد این تابع پرداخت رو بدون تغییر و به‌روزرسانی برمی‌گرداند.
      *
      * @param Bank_Receipt $receipt
      * @return Bank_Receipt
@@ -114,7 +117,7 @@ class Bank_Service
     /**
      * Finds recepts
      *
-     * @param Plfu_Model $owner
+     * @param Pluf_Model $owner
      * @param integer $ownerId
      */
     public static function find($owner, $ownerId = null)
@@ -126,7 +129,7 @@ class Bank_Service
         } elseif (! is_null($owner)) { // module
             $ownerClass = $owner;
         }
-        
+
         // get list
         $receipt = new Bank_Receipt();
         $q = new Pluf_SQL('owner_class=%s AND owner_id=%s', array(
@@ -149,7 +152,7 @@ class Bank_Service
         return array(
             new Bank_Engine_Mellat(),
             new Bank_Engine_Zarinpal(),
-            
+
             new Bank_Engine_PayPall(),
             new Bank_Engine_BitPay()
         );
