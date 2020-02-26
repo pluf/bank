@@ -34,7 +34,12 @@ class Bank_Views_Receipt
      */
     public function find($request, $match)
     {
-        $pag = new Pluf_Paginator(new Bank_Receipt());
+        $receipt = new Bank_Receipt();
+        if(User_Precondition::isOwner($request)){
+            // Make secure-id as readable for owners.
+            $receipt->_a['cols']['secure_id']['readable'] = true;
+        }
+        $pag = new Pluf_Paginator($receipt);
         $pag->configure(array(), array( // search
             'title',
             'description'
@@ -73,6 +78,9 @@ class Bank_Views_Receipt
     public function get($request, $match)
     {
         $receipt = Bank_Shortcuts_GetReceiptOr404($match['id']);
+        if(User_Precondition::isOwner($request)){
+            $receipt->_a['cols']['secure_id']['readable'] = true;
+        }
         return $receipt;
     }
 
@@ -88,6 +96,7 @@ class Bank_Views_Receipt
             $match['secure_id']
         ));
         $receipt = $receipt->getOne($sql->gen());
+        $receipt->_a['cols']['secure_id']['readable'] = true;
         return $receipt;
     }
 
@@ -119,6 +128,7 @@ class Bank_Views_Receipt
         if ($engine->update($receipt)) {
             $receipt->update();
         }
+        $receipt->_a['cols']['secure_id']['readable'] = true;
         return $receipt;
     }
 

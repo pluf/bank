@@ -86,6 +86,7 @@ class Bank_Service
         $engine = $backend->get_engine();
         $engine->create($receipt);
         $receipt->update();
+        $receipt->_a['cols']['secure_id']['readable'] = true;
         return $receipt;
     }
 
