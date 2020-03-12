@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of Pluf Framework, a simple PHP Application Framework.
  * Copyright (C) 2010-2020 Phoinex Scholars Co. http://dpq.co.ir
@@ -17,20 +16,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-$cfg = array();
+namespace Pluf\Bank;
 
-// Default database configuration. The database defined here will be
-// directly accessible from Pluf::db() of course it is still possible
-// to open any other number of database connections through Pluf_DB
-$cfg['db_login'] = 'root';
-$cfg['db_password'] = '';
-$cfg['db_server'] = 'localhost';
-$cfg['db_database'] = '/tmp/test.sqlite.db';
+use Pluf;
 
-// Starting version 4.1 of MySQL the utf-8 support is "correct".
-// The reason of the db_version for MySQL is only for that.
-$cfg['db_version'] = '5.0';
-$cfg['db_engine'] = 'SQLite';
+class Module extends \Pluf\Module
+{
 
-return $cfg;
+    const moduleJsonPath = __DIR__ . '/module.json';
+
+    const relations = array(
+        'Bank_Wallet' => array(
+            'relate_to' => array(
+                'User_Account'
+            )
+        ),
+        'Bank_Transfer' => array(
+            'relate_to' => array(
+                'User_Account',
+                'Bank_Wallet',
+                'Bank_Receipt'
+            )
+        ),
+        'Bank_Receipt' => array(
+            'relate_to' => array(
+                'Bank_Backend'
+            )
+        )
+    );
+
+    const urlsPath = __DIR__ . '/urls.php';
+
+    public function init(Pluf $bootstrap): void
+    {}
+}
 

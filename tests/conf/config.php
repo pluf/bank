@@ -12,8 +12,6 @@ $cfg['bank_debug'] = true;
 $cfg['installed_apps'] = array(
     'Pluf',
     'User',
-    'Role',
-    'Group',
     'Monitor',
     'Bank'
 );
@@ -32,7 +30,7 @@ $cfg['secret_key'] = '5a8d7e0f2aad8bdab8f6eef725412850';
 // cached data and other temporary resources.
 // It must be writeable by your webserver instance.
 // It is mandatory if you are using the template system.
-$cfg['tmp_folder'] = __DIR__ . '/../tmp';
+$cfg['tmp_folder'] = '/tmp';
 
 // The folder in which the templates of the application are located.
 $cfg['template_folders'] = array(
@@ -53,6 +51,6 @@ $cfg['template_tags'] = array();
 
 // Must be shared by all the installed_apps and the core framework.
 // That way you can have several installations of the core framework.
-$cfg['db_table_prefix'] = 'bank_unit_tests_';
+$cfg['db_table_prefix'] = 'bank_unit_tests_' . rand() . '_';
 
 return $cfg;
