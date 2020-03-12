@@ -16,16 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\IncompleteTestError;
+namespace Pluf\Test\Transfer;
 
-require_once 'Pluf.php';
+use Pluf\Exception;
+use Pluf\Test\TestCase;
+use Bank_Backend;
+use Bank_Service;
+use Bank_Transfer;
+use Bank_Wallet;
+use Pluf;
+use Pluf_Migration;
+use User_Account;
+use User_Credential;
+use User_Role;
 
-/**
- *
- * @backupGlobals disabled
- * @backupStaticAttributes disabled
- */
 class Transfer_ModelTest extends TestCase
 {
 
@@ -38,7 +42,7 @@ class Transfer_ModelTest extends TestCase
     public static function createDataBase()
     {
         Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m = new Pluf_Migration();
         $m->install();
         $m->init();
 
@@ -69,7 +73,7 @@ class Transfer_ModelTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m = new Pluf_Migration();
         $m->unInstall();
     }
 
@@ -93,14 +97,14 @@ class Transfer_ModelTest extends TestCase
         $wallet1->currency = 'IRR';
         $wallet1->description = 'It is my wallet description';
         $wallet1->owner_id = $this->user;
-        Test_Assert::assertTrue($wallet1->create(), 'Impossible to create wallet');
+        $this->assertTrue($wallet1->create(), 'Impossible to create wallet');
 
         $wallet2 = new Bank_Wallet();
         $wallet2->title = 'wallet-' . rand();
         $wallet2->currency = 'IRR';
         $wallet2->description = 'It is my wallet description';
         $wallet2->owner_id = $this->user;
-        Test_Assert::assertTrue($wallet2->create(), 'Impossible to create wallet');
+        $this->assertTrue($wallet2->create(), 'Impossible to create wallet');
 
         $transfer = new Bank_Transfer();
         $transfer->amount = rand();
@@ -108,7 +112,7 @@ class Transfer_ModelTest extends TestCase
         $transfer->acting_id = $this->user;
         $transfer->from_wallet_id = $wallet1;
         $transfer->to_wallet_id = $wallet2;
-        Test_Assert::assertTrue($transfer->create(), 'Impossible to create wallet-to-wallet transfer');
+        $this->assertTrue($transfer->create(), 'Impossible to create wallet-to-wallet transfer');
         return $transfer;
     }
 
@@ -123,7 +127,7 @@ class Transfer_ModelTest extends TestCase
         $wallet1->currency = 'IRR';
         $wallet1->description = 'It is my wallet description';
         $wallet1->owner_id = $this->user;
-        Test_Assert::assertTrue($wallet1->create(), 'Impossible to create transfer');
+        $this->assertTrue($wallet1->create(), 'Impossible to create transfer');
 
         $backend = new Bank_Backend();
         $backend->title = 'test backend';
@@ -131,7 +135,7 @@ class Transfer_ModelTest extends TestCase
         $backend->redirect = 'test.pluf.ir';
         $backend->engine = 'zarinpal';
         $backend->currency = 'IRR';
-        Test_Assert::assertTrue($backend->create(), 'Impossible to create wallet');
+        $this->assertTrue($backend->create(), 'Impossible to create wallet');
         
         $param = array(
             'amount' => rand(),
@@ -141,7 +145,7 @@ class Transfer_ModelTest extends TestCase
             'backend_id' => $backend->id
         );
         $receipt = Bank_Service::create($param, 'user-account', $this->user->id);
-        Test_Assert::assertTrue(!$receipt->isAnonymous(), 'Impossible to create receipt');
+        $this->assertTrue(!$receipt->isAnonymous(), 'Impossible to create receipt');
 
         $transfer = new Bank_Transfer();
         $transfer->amount = rand();
@@ -149,7 +153,7 @@ class Transfer_ModelTest extends TestCase
         $transfer->acting_id = $this->user;
         $transfer->receipt_id = $receipt;
         $transfer->to_wallet_id = $wallet1;
-        Test_Assert::assertTrue($transfer->create(), 'Impossible to create receipt-to-wallet transfer');
+        $this->assertTrue($transfer->create(), 'Impossible to create receipt-to-wallet transfer');
         return $transfer;
     }
 
@@ -162,20 +166,20 @@ class Transfer_ModelTest extends TestCase
         $transfer = $this->createWalletToWalletTransfer();
         // The transfer has two foreign key to the wallet
         $actor = $transfer->get_acting();
-        Test_Assert::assertEquals($this->user->id, $actor->id);
+        $this->assertEquals($this->user->id, $actor->id);
         $wallet = $transfer->get_from_wallet();
-        Test_Assert::assertNotEquals(0, $wallet->id);
+        $this->assertNotEquals(0, $wallet->id);
         $wallet = $transfer->get_to_wallet();
-        Test_Assert::assertNotEquals(0, $wallet->id);
+        $this->assertNotEquals(0, $wallet->id);
         
         $transfer = $this->createReceiptToWalletTransfer();
         // The transfer has foreign key to a wallet and a receipt
         $actor = $transfer->get_acting();
-        Test_Assert::assertEquals($this->user->id, $actor->id);
+        $this->assertEquals($this->user->id, $actor->id);
         $wallet = $transfer->get_to_wallet();
-        Test_Assert::assertNotEquals(0, $wallet->id);
+        $this->assertNotEquals(0, $wallet->id);
         $receipt = $transfer->get_receipt();
-        Test_Assert::assertNotEquals(0, $receipt->id);
+        $this->assertNotEquals(0, $receipt->id);
     }
 
 }

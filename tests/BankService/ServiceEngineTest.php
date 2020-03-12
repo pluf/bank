@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\IncompleteTestError;
-require_once 'Pluf.php';
+namespace Pluf\Test\BankService;
 
-/**
- *
- * @backupGlobals disabled
- * @backupStaticAttributes disabled
- */
+use Pluf\Test\TestCase;
+use Bank_Service;
+use Pluf;
+use Pluf_Migration;
+
 class ServiceEngineTest extends TestCase
 {
 
@@ -35,7 +33,7 @@ class ServiceEngineTest extends TestCase
     public static function createDataBase()
     {
         Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(Pluf::f('installed_apps', array()));
+        $m = new Pluf_Migration();
         $m->install();
     }
 
@@ -45,7 +43,7 @@ class ServiceEngineTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m = new Pluf_Migration();
         $m->unInstall();
     }
 

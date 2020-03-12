@@ -129,7 +129,7 @@ class Wallet_RestTest extends TestCase
         $item->description = 'It is my wallet description';
         $item->owner_id = $this->user;
         $item->create();
-        Test_Assert::assertFalse($item->isAnonymous(), 'Could not create Bank_Wallet');
+        $this->assertFalse($item->isAnonymous(), 'Could not create Bank_Wallet');
         // Get item
         $response = $this->client->get('/bank/wallets/' . $item->id);
         $this->assertNotNull($response);
@@ -148,7 +148,7 @@ class Wallet_RestTest extends TestCase
         $item->description = 'It is my wallet description';
         $item->owner_id = $this->user;
         $item->create();
-        Test_Assert::assertFalse($item->isAnonymous(), 'Could not create Bank_Wallet');
+        $this->assertFalse($item->isAnonymous(), 'Could not create Bank_Wallet');
         // Update item
         $form = array(
             'title' => 'new title' . rand(),
@@ -171,7 +171,7 @@ class Wallet_RestTest extends TestCase
         $item->description = 'It is my wallet description';
         $item->owner_id = $this->user;
         $item->create();
-        Test_Assert::assertFalse($item->isAnonymous(), 'Could not create Bank_Wallet');
+        $this->assertFalse($item->isAnonymous(), 'Could not create Bank_Wallet');
 
         // delete
         $response = $this->client->delete('/bank/wallets/' . $item->id);
@@ -188,7 +188,7 @@ class Wallet_RestTest extends TestCase
         $response = $this->client->get('/bank/wallets');
         $this->assertNotNull($response);
         $this->assertEquals($response->status_code, 200);
-        Test_Assert::assertResponsePaginateList($response, 'Find result is not JSON paginated list');
+        $this->assertResponsePaginateList($response, 'Find result is not JSON paginated list');
     }
     
 }

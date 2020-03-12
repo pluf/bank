@@ -93,7 +93,7 @@ class Wallet_ModelTest extends TestCase
         $wallet->currency = 'IRR';
         $wallet->description = 'It is my wallet description';
         $wallet->owner_id = $this->user;
-        Test_Assert::assertTrue($wallet->create(), 'Impossible to create wallet');
+        $this->assertTrue($wallet->create(), 'Impossible to create wallet');
     }
 
     /**
@@ -107,14 +107,14 @@ class Wallet_ModelTest extends TestCase
         $wallet->currency = 'IRR';
         $wallet->description = 'It is my wallet description';
         $wallet->owner_id = $this->user;
-        Test_Assert::assertTrue($wallet->create(), 'Impossible to create wallet');
+        $this->assertTrue($wallet->create(), 'Impossible to create wallet');
 
         $wallet = new Bank_Wallet($wallet->id);
         // The transfer has two foreign key to the wallet
         $transfers = $wallet->get_withdrawals_list();
-        Test_Assert::assertEquals(0, $transfers->count());
+        $this->assertEquals(0, $transfers->count());
         $transfers = $wallet->get_deposits_list();
-        Test_Assert::assertEquals(0, $transfers->count());
+        $this->assertEquals(0, $transfers->count());
     }
 
     /**
@@ -128,12 +128,12 @@ class Wallet_ModelTest extends TestCase
         $wallet->currency = 'IRR';
         $wallet->description = 'It is my wallet description';
         $wallet->owner_id = $this->user;
-        Test_Assert::assertTrue($wallet->create(), 'Impossible to create wallet');
+        $this->assertTrue($wallet->create(), 'Impossible to create wallet');
 
         $wallet = new Bank_Wallet($wallet->id);
         $owner = $wallet->get_owner();
-        Test_Assert::assertNotEquals(null, $owner);
-        Test_Assert::assertEquals($this->user->id, $owner->id);
+        $this->assertNotEquals(null, $owner);
+        $this->assertEquals($this->user->id, $owner->id);
     }
 }
 

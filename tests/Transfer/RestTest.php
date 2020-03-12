@@ -16,15 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\IncompleteTestError;
-require_once 'Pluf.php';
+namespace Pluf\Test\Transfer;
 
-/**
- *
- * @backupGlobals disabled
- * @backupStaticAttributes disabled
- */
+use Pluf\Exception;
+use Pluf\Test\Client;
+use Pluf\Test\TestCase;
+use Bank_Backend;
+use Bank_Service;
+use Bank_Transfer;
+use Bank_Wallet;
+use Pluf;
+use Pluf_HTTP_Error404;
+use Pluf_Migration;
+use User_Account;
+use User_Credential;
+use User_Role;
+
+
 class Transfer_RestTest extends TestCase
 {
 
@@ -47,7 +55,7 @@ class Transfer_RestTest extends TestCase
     public static function createDataBase()
     {
         Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m = new Pluf_Migration();
         $m->install();
         $m->init();
 
@@ -78,7 +86,7 @@ class Transfer_RestTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m = new Pluf_Migration();
         $m->unInstall();
     }
 
@@ -88,20 +96,7 @@ class Transfer_RestTest extends TestCase
      */
     public function init()
     {
-        $this->client = new Test_Client(array(
-            array(
-                'app' => 'Bank',
-                'regex' => '#^/bank#',
-                'base' => '',
-                'sub' => include 'Bank/urls.php'
-            ),
-            array(
-                'app' => 'User',
-                'regex' => '#^/user#',
-                'base' => '',
-                'sub' => include 'User/urls.php'
-            )
-        ));
+        $this->client = new Client();
         // login
         $this->client->post('/user/login', array(
             'login' => 'test',
@@ -116,14 +111,14 @@ class Transfer_RestTest extends TestCase
         $this->wallet1->currency = 'IRR';
         $this->wallet1->description = 'It is my wallet description';
         $this->wallet1->owner_id = $this->user;
-        Test_Assert::assertTrue($this->wallet1->create(), 'Impossible to create transfer');
+        $this->assertTrue($this->wallet1->create(), 'Impossible to create transfer');
 
         $this->wallet2 = new Bank_Wallet();
         $this->wallet2->title = 'wallet-' . rand();
         $this->wallet2->currency = 'IRR';
         $this->wallet2->description = 'It is my wallet description';
         $this->wallet2->owner_id = $this->user;
-        Test_Assert::assertTrue($this->wallet2->create(), 'Impossible to create transfer');
+        $this->assertTrue($this->wallet2->create(), 'Impossible to create transfer');
 
         // Bank Backend
         $this->backend = new Bank_Backend();
@@ -132,7 +127,7 @@ class Transfer_RestTest extends TestCase
         $this->backend->redirect = 'test.pluf.ir';
         $this->backend->engine = 'zarinpal';
         $this->backend->currency = 'IRR';
-        Test_Assert::assertTrue($this->backend->create(), 'Impossible to create bank backend');
+        $this->assertTrue($this->backend->create(), 'Impossible to create bank backend');
 
         // Receipt
         $param = array(
@@ -143,7 +138,7 @@ class Transfer_RestTest extends TestCase
             'backend_id' => $this->backend->id
         );
         $this->receipt = Bank_Service::create($param, 'user-account', $this->user->id);
-        Test_Assert::assertTrue(! $this->receipt->isAnonymous(), 'Impossible to create receipt');
+        $this->assertTrue(! $this->receipt->isAnonymous(), 'Impossible to create receipt');
     }
 
     /**
@@ -190,7 +185,7 @@ class Transfer_RestTest extends TestCase
         $transfer->acting_id = $this->user;
         $transfer->from_wallet_id = $this->wallet1;
         $transfer->to_wallet_id = $this->wallet2;
-        Test_Assert::assertTrue($transfer->create(), 'Impossible to create wallet-to-wallet transfer');
+        $this->assertTrue($transfer->create(), 'Impossible to create wallet-to-wallet transfer');
         // Get Transfer from wallet 1
         $response = $this->client->get('/bank/wallets/' . $this->wallet1->id . '/transfers/' . $transfer->id);
         $this->assertNotNull($response);
@@ -213,7 +208,7 @@ class Transfer_RestTest extends TestCase
         $transfer->acting_id = $this->user;
         $transfer->from_wallet_id = $this->wallet1;
         $transfer->to_wallet_id = $this->wallet2;
-        Test_Assert::assertTrue($transfer->create(), 'Impossible to create wallet-to-wallet transfer');
+        $this->assertTrue($transfer->create(), 'Impossible to create wallet-to-wallet transfer');
         // Should not update a transfer
         $this->expectException(Pluf_HTTP_Error404::class);
         $form = array(
@@ -235,7 +230,7 @@ class Transfer_RestTest extends TestCase
         $transfer->acting_id = $this->user;
         $transfer->from_wallet_id = $this->wallet1;
         $transfer->to_wallet_id = $this->wallet2;
-        Test_Assert::assertTrue($transfer->create(), 'Impossible to create wallet-to-wallet transfer');
+        $this->assertTrue($transfer->create(), 'Impossible to create wallet-to-wallet transfer');
         // Should not update a transfer
         $this->expectException(Pluf_HTTP_Error404::class);
         $response = $this->client->delete('/bank/wallets/' . $this->wallet1->id . '/transfers/' . $transfer->id);
@@ -251,7 +246,7 @@ class Transfer_RestTest extends TestCase
         $response = $this->client->get('/bank/wallets/' . $this->wallet1->id . '/transfers');
         $this->assertNotNull($response);
         $this->assertEquals($response->status_code, 200);
-        Test_Assert::assertResponsePaginateList($response, 'Find result is not JSON paginated list');
+        $this->assertResponsePaginateList($response, 'Find result is not JSON paginated list');
     }
 
     /**
@@ -277,7 +272,7 @@ class Transfer_RestTest extends TestCase
         $this->assertNotNull($response);
         $this->assertEquals($response->status_code, 200);
         $receipt = json_decode($response->content, true);
-        Test_Assert::assertNotNull($receipt['id']);
+        $this->assertNotNull($receipt['id']);
 
         // Get the payment (it updates balance of the wallet)
         $response = $this->client->get('/bank/wallets/' . $this->wallet1->id . '/payments/' . $receipt['id']);
@@ -298,7 +293,7 @@ class Transfer_RestTest extends TestCase
         $response = $this->client->get('/bank/wallets/' . $this->wallet1->id . '/payments');
         $this->assertNotNull($response);
         $this->assertEquals($response->status_code, 200);
-        Test_Assert::assertResponsePaginateList($response, 'Payments list of wallet is not JSON paginated list');
+        $this->assertResponsePaginateList($response, 'Payments list of wallet is not JSON paginated list');
     }
 }
 
