@@ -16,16 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\IncompleteTestError;
-require_once 'Pluf.php';
+namespace Pluf\Test\Wallet;
 
-/**
- *
- * @backupGlobals disabled
- * @backupStaticAttributes disabled
- */
-class Wallet_AnonymousRestTest extends TestCase
+use Pluf\Exception;
+use Pluf\Test\Client;
+use Pluf\Test\TestCase;
+use Bank_Wallet;
+use Pluf;
+use Pluf_Exception_Unauthorized;
+use Pluf_Migration;
+use User_Account;
+use User_Credential;
+use User_Role;
+
+class AnonymousRestTest extends TestCase
 {
 
     var $client;
@@ -38,7 +42,7 @@ class Wallet_AnonymousRestTest extends TestCase
     public static function createDataBase()
     {
         Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m = new Pluf_Migration();
         $m->install();
         $m->init();
 
@@ -69,7 +73,7 @@ class Wallet_AnonymousRestTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m = new Pluf_Migration();
         $m->unInstall();
     }
 
@@ -79,20 +83,7 @@ class Wallet_AnonymousRestTest extends TestCase
      */
     public function init()
     {
-        $this->client = new Test_Client(array(
-            array(
-                'app' => 'Bank',
-                'regex' => '#^/bank#',
-                'base' => '',
-                'sub' => include 'Bank/urls.php'
-            ),
-            array(
-                'app' => 'User',
-                'regex' => '#^/user#',
-                'base' => '',
-                'sub' => include 'User/urls.php'
-            )
-        ));
+        $this->client = new Client();
         $this->user = User_Account::getUser('test');
     }
 

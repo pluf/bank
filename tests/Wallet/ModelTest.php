@@ -16,17 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\IncompleteTestError;
+namespace Pluf\Test\Wallet;
 
-require_once 'Pluf.php';
+use Pluf\Exception;
+use Pluf\Test\TestCase;
+use Bank_Wallet;
+use Pluf;
+use Pluf_Migration;
+use User_Account;
+use User_Credential;
+use User_Role;
 
-/**
- *
- * @backupGlobals disabled
- * @backupStaticAttributes disabled
- */
-class Wallet_ModelTest extends TestCase
+class ModelTest extends TestCase
 {
 
     var $user = null;
@@ -38,7 +39,7 @@ class Wallet_ModelTest extends TestCase
     public static function createDataBase()
     {
         Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m = new Pluf_Migration();
         $m->install();
         $m->init();
 
@@ -69,7 +70,7 @@ class Wallet_ModelTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m = new Pluf_Migration();
         $m->unInstall();
     }
 
