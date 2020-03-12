@@ -18,8 +18,8 @@
  */
 namespace Pluf\Test\Backend;
 
-use GuzzleHttp\Client;
-use PHPUnit\Framework\TestCase;
+use Pluf\Test\Client;
+use Pluf\Test\TestCase;
 use Pluf\Exception;
 use Bank_Service;
 use Pluf;
