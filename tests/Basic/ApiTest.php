@@ -80,7 +80,7 @@ class ApiTest extends TestCase
     public static function removeDatabses()
     {
         $m = new Pluf_Migration();
-        $m->unInstall();
+        $m->uninstall();
     }
 
     /**
