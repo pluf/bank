@@ -16,16 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-use PHPUnit\Framework\TestCase;
+namespace Pluf\Test\Basic;
 
-require_once 'Pluf.php';
+use Pluf\Test\TestCase;
+use Pluf\Exception;
+use Bank_Backend;
+use Bank_Engine;
+use Bank_Engine_BitPay;
+use Bank_Engine_Mellat;
+use Bank_Engine_PayIr;
+use Bank_Engine_PayPall;
+use Bank_Engine_Zarinpal;
+use Bank_Monitor;
+use Bank_Receipt;
+use Bank_Service;
+use Bank_Transfer;
+use Bank_Wallet;
+use Pluf;
+use Pluf_Migration;
+use User_Account;
+use User_Credential;
+use User_Role;
 
-/**
- *
- * @backupGlobals disabled
- * @backupStaticAttributes disabled
- */
-class Bank_ApiTest extends TestCase
+
+class ApiTest extends TestCase
 {
 
     /**
@@ -35,7 +49,7 @@ class Bank_ApiTest extends TestCase
     public static function createDataBase()
     {
         Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(Pluf::f('installed_apps', array()));
+        $m = new Pluf_Migration();
         $m->install();
 
         // Test user
@@ -65,8 +79,8 @@ class Bank_ApiTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
-        $m->unInstall();
+        $m = new Pluf_Migration();
+        $m->uninstall();
     }
 
     /**

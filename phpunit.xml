@@ -1,22 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true">
+<phpunit 
+	bootstrap="./vendor/autoload.php"
+	stopOnWarning="false"
+	verbose="false"
+	backupGlobals="false"
+	backupStaticAttributes="false"
+	colors="true">
 	<testsuites>
 		<testsuite name="pluf/bank">
-			<directory>tests/Bank/</directory>
-			<directory>tests/Bank_Service/</directory>
-			<directory>tests/Bank_REST/</directory>
+			<directory>tests/Basic/</directory>
+			<directory>tests/Backend/</directory>
+			<directory>tests/BankService/</directory>
 			<directory>tests/Wallet/</directory>
 			<directory>tests/Transfer/</directory>
 		</testsuite>
 	</testsuites>
 
 	<!-- Code coverage -->
+	<!-- Code coverage -->
 	<filter>
 		<whitelist addUncoveredFilesFromWhitelist="true">
-			<directory suffix=".php">src</directory>
+			<directory suffix=".php">./src</directory>
+			<directory suffix=".php">./src6</directory>
 		</whitelist>
 	</filter>
 	<logging>
-		<log type="coverage-clover" target="build/logs/clover.xml" />
+		<log 
+			type="coverage-html" 
+			target="build/tmp/report" 
+			lowUpperBound="35" 
+			highLowerBound="70"/>
+		<log 
+			type="coverage-clover" 
+			target="build/tmp/coverage.xml"/>
+		<log 
+			type="junit" 
+			target="build/tmp/logfile.xml"/>
 	</logging>
 </phpunit>

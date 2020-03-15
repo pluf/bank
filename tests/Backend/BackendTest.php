@@ -16,21 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace Pluf\Test\Wallet;
+namespace Pluf\Test\Backend;
 
-use Pluf\Exception;
+use Pluf\Test\Client;
 use Pluf\Test\TestCase;
-use Bank_Wallet;
+use Pluf\Exception;
+use Bank_Backend;
 use Pluf;
 use Pluf_Migration;
 use User_Account;
 use User_Credential;
 use User_Role;
 
-class ModelTest extends TestCase
+class BackendTest extends TestCase
 {
 
-    var $user = null;
+    private static $client = null;
 
     /**
      *
@@ -41,7 +42,6 @@ class ModelTest extends TestCase
         Pluf::start(__DIR__ . '/../conf/config.php');
         $m = new Pluf_Migration();
         $m->install();
-        $m->init();
 
         // Test user
         $user = new User_Account();
@@ -62,6 +62,8 @@ class ModelTest extends TestCase
 
         $per = User_Role::getFromString('tenant.owner');
         $user->setAssoc($per);
+
+        self::$client = new Client();
     }
 
     /**
@@ -75,67 +77,35 @@ class ModelTest extends TestCase
     }
 
     /**
-     *
-     * @before
-     */
-    public function init()
-    {
-        $this->user = User_Account::getUser('test');
-    }
-
-    /**
+     * Geting list of engines
      *
      * @test
      */
-    public function shouldPossibleCreateNew()
+    public function shouldOwnerCanCreateBackend()
     {
-        $wallet = new Bank_Wallet();
-        $wallet->title = 'wallet-' . rand();
-        $wallet->currency = 'IRR';
-        $wallet->description = 'It is my wallet description';
-        $wallet->owner_id = $this->user;
-        $this->assertTrue($wallet->create(), 'Impossible to create wallet');
-    }
+        // Login
+        $response = self::$client->post('/user/login', array(
+            'login' => 'test',
+            'password' => 'test'
+        ));
+        $this->assertResponseStatusCode($response, 200, 'Fail to login');
 
-    /**
-     *
-     * @test
-     */
-    public function shouldPossibleToGetTransfers()
-    {
-        $wallet = new Bank_Wallet();
-        $wallet->title = 'wallet-' . rand();
-        $wallet->currency = 'IRR';
-        $wallet->description = 'It is my wallet description';
-        $wallet->owner_id = $this->user;
-        $this->assertTrue($wallet->create(), 'Impossible to create wallet');
+        // Create a backend
+        $response = self::$client->post('/bank/backends', array(
+            'type' => 'zarinpal',
+            'MerchantID' => 'xxx',
+            'title' => 'title',
+            'description' => 'Description',
+            'symbol' => 'Symbole'
+        ));
+        $this->assertResponseNotNull($response, 'Find result is empty');
+        $this->assertResponseStatusCode($response, 200, 'Find status code is not 200');
 
-        $wallet = new Bank_Wallet($wallet->id);
-        // The transfer has two foreign key to the wallet
-        $transfers = $wallet->get_withdrawals_list();
-        $this->assertEquals(0, $transfers->count());
-        $transfers = $wallet->get_deposits_list();
-        $this->assertEquals(0, $transfers->count());
-    }
-
-    /**
-     *
-     * @test
-     */
-    public function shouldPossibleToGetOwner()
-    {
-        $wallet = new Bank_Wallet();
-        $wallet->title = 'wallet-' . rand();
-        $wallet->currency = 'IRR';
-        $wallet->description = 'It is my wallet description';
-        $wallet->owner_id = $this->user;
-        $this->assertTrue($wallet->create(), 'Impossible to create wallet');
-
-        $wallet = new Bank_Wallet($wallet->id);
-        $owner = $wallet->get_owner();
-        $this->assertNotEquals(null, $owner);
-        $this->assertEquals($this->user->id, $owner->id);
+        $backend = new Bank_Backend();
+        $list = $backend->getList();
+        $this->assertTrue(sizeof($list) >= 1, 'No backend is created');
+        foreach ($list as $b) {
+            $b->delete();
+        }
     }
 }
-
-

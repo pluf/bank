@@ -16,16 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\IncompleteTestError;
-require_once 'Pluf.php';
+namespace Pluf\Test\BankService;
 
-/**
- *
- * @backupGlobals disabled
- * @backupStaticAttributes disabled
- */
-class ServiceCreateTest extends TestCase
+use Pluf\Test\TestCase;
+use Bank_Backend;
+use Bank_Service;
+use Pluf;
+use Pluf_Migration;
+
+class ServiceFindTest extends TestCase
 {
 
     /**
@@ -35,7 +34,7 @@ class ServiceCreateTest extends TestCase
     public static function createDataBase()
     {
         Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(Pluf::f('installed_apps', array()));
+        $m = new Pluf_Migration();
         $m->install();
     }
 
@@ -45,35 +44,8 @@ class ServiceCreateTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
-        $m->unInstall();
-    }
-
-    /**
-     *
-     * @test
-     */
-    public function testCrate()
-    {
-        $backend = new Bank_Backend();
-        $backend->title = 'title';
-        $backend->description = 'des';
-        $backend->symbol = 'symbo.';
-        $backend->home = '';
-        $backend->redirect = '';
-        $backend->engine = 'zarinpal';
-        $backend->create();
-
-        $res = Bank_Service::create(array(
-            'amount' => 1000, // مقدار پرداخت به ریال
-            'title' => 'payment title',
-            'description' => 'description',
-            'email' => 'user@email.address',
-            'phone' => '0917222222',
-            'callbackURL' => 'http://.....',
-            'backend_id' => $backend->id
-        ));
-        $this->assertNotNull($res);
+        $m = new Pluf_Migration();
+        $m->uninstall();
     }
 
     /**
@@ -91,7 +63,7 @@ class ServiceCreateTest extends TestCase
         $backend->engine = 'zarinpal';
         $backend->create();
 
-        $object = $backend;
+        $owner = $backend;
 
         $res = Bank_Service::create(array(
             'amount' => 1000, // مقدار پرداخت به ریال
@@ -101,10 +73,14 @@ class ServiceCreateTest extends TestCase
             'phone' => '0917222222',
             'callbackURL' => 'http://.....',
             'backend_id' => $backend->id
-        ), $object);
+        ), $owner);
         $this->assertNotNull($res);
-        $this->assertEquals($backend->getClass(), $res->owner_class);
-        $this->assertEquals($backend->id, $res->owner_id);
+        $this->assertEquals($owner->getClass(), $res->owner_class);
+        $this->assertEquals($owner->id, $res->owner_id);
+
+        $list = Bank_Service::find($owner);
+        $this->assertNotNull($list);
+        $this->assertEquals(1, $list->count());
     }
 
     /**
@@ -137,6 +113,10 @@ class ServiceCreateTest extends TestCase
         $this->assertNotNull($res);
         $this->assertEquals($ownerClass, $res->owner_class);
         $this->assertEquals($ownerId, $res->owner_id);
+
+        $list = Bank_Service::find($ownerClass, $ownerId);
+        $this->assertNotNull($list);
+        $this->assertEquals(1, $list->count());
     }
 }
 

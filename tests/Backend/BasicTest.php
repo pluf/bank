@@ -16,15 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-use PHPUnit\Framework\TestCase;
-require_once 'Pluf.php';
+namespace Pluf\Test\Backend;
 
-/**
- *
- * @backupGlobals disabled
- * @backupStaticAttributes disabled
- */
-class Bank_REST_BasicTest extends TestCase
+use Pluf\Test\Client;
+use Pluf\Test\TestCase;
+use Pluf\Exception;
+use Bank_Service;
+use Pluf;
+use Pluf_Migration;
+use User_Account;
+use User_Credential;
+use User_Role;
+
+class BasicTest extends TestCase
 {
 
     private static $client = null;
@@ -36,7 +40,7 @@ class Bank_REST_BasicTest extends TestCase
     public static function createDataBase()
     {
         Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(Pluf::f('installed_apps', array()));
+        $m = new Pluf_Migration();
         $m->install();
 
         // Test user
@@ -59,20 +63,7 @@ class Bank_REST_BasicTest extends TestCase
         $per = User_Role::getFromString('tenant.owner');
         $user->setAssoc($per);
 
-        self::$client = new Test_Client(array(
-            array(
-                'app' => 'Bank',
-                'regex' => '#^/bank#',
-                'base' => '',
-                'sub' => include 'Bank/urls.php'
-            ),
-            array(
-                'app' => 'User',
-                'regex' => '#^/user#',
-                'base' => '',
-                'sub' => include 'User/urls.php'
-            )
-        ));
+        self::$client = new Client();
     }
 
     /**
@@ -81,8 +72,8 @@ class Bank_REST_BasicTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
-        $m->unInstall();
+        $m = new Pluf_Migration();
+        $m->uninstall();
     }
 
     /**
@@ -93,9 +84,9 @@ class Bank_REST_BasicTest extends TestCase
     public function shouldAnonymousGetListOfEngines()
     {
         $response = self::$client->get('/bank/engines');
-        Test_Assert::assertResponseNotNull($response, 'Find result is empty');
-        Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
-        Test_Assert::assertResponsePaginateList($response, 'Find result is not JSON paginated list');
+        $this->assertResponseNotNull($response, 'Find result is empty');
+        $this->assertResponseStatusCode($response, 200, 'Find status code is not 200');
+        $this->assertResponsePaginateList($response, 'Find result is not JSON paginated list');
     }
 
     /**
@@ -108,8 +99,8 @@ class Bank_REST_BasicTest extends TestCase
         $engs = Bank_Service::engines();
         foreach ($engs as $eng) {
             $response = self::$client->get('/bank/engines/' . $eng->getType());
-            Test_Assert::assertResponseNotNull($response, 'Find result is empty');
-            Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
+            $this->assertResponseNotNull($response, 'Find result is empty');
+            $this->assertResponseStatusCode($response, 200, 'Find status code is not 200');
         }
     }
 
@@ -121,8 +112,8 @@ class Bank_REST_BasicTest extends TestCase
     public function shouldAnonymousGetListOfBackend()
     {
         $response = self::$client->get('/bank/backends');
-        Test_Assert::assertResponseNotNull($response, 'Find result is empty');
-        Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
-        Test_Assert::assertResponsePaginateList($response, 'Find result is not JSON paginated list');
+        $this->assertResponseNotNull($response, 'Find result is empty');
+        $this->assertResponseStatusCode($response, 200, 'Find status code is not 200');
+        $this->assertResponsePaginateList($response, 'Find result is not JSON paginated list');
     }
 }

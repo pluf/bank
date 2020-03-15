@@ -16,22 +16,46 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-return array(
-    'Bank_Wallet' => array(
-        'relate_to' => array(
-            'User_Account'
-        )
-    ),
-    'Bank_Transfer' => array(
-        'relate_to' => array(
-            'User_Account',
-            'Bank_Wallet',
-            'Bank_Receipt'
-        )
-    ),
-    'Bank_Receipt' => array(
-        'relate_to' => array(
-            'Bank_Backend'
-        )
-    )
-);
+namespace Pluf\Test\BankService;
+
+use Pluf\Test\TestCase;
+use Bank_Service;
+use Pluf;
+use Pluf_Migration;
+
+class ServiceEngineTest extends TestCase
+{
+
+    /**
+     *
+     * @beforeClass
+     */
+    public static function createDataBase()
+    {
+        Pluf::start(__DIR__ . '/../conf/config.php');
+        $m = new Pluf_Migration();
+        $m->install();
+    }
+
+    /**
+     *
+     * @afterClass
+     */
+    public static function removeDatabses()
+    {
+        $m = new Pluf_Migration();
+        $m->uninstall();
+    }
+
+    /**
+     *
+     * @test
+     */
+    public function testCrateForModel()
+    {
+        $englist = Bank_Service::engines();
+        $this->assertNotEmpty($englist);
+        $this->assertTrue(sizeof($englist) > 0);
+    }
+}
+
