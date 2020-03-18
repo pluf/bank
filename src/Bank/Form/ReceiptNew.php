@@ -66,9 +66,9 @@ class Bank_Form_ReceiptNew extends Pluf_Form
 
     function clean_backend()
     {
-        $backend = Pluf::factory('Bank_Backend', $this->cleaned_data['backend']);
+        $backend = Pluf::factory(Bank_Backend::class, $this->cleaned_data['backend']);
         if ($backend->isAnonymous()) {
-            throw new Pluf_Exception('backend not found');
+            throw new \Pluf\Exception('backend not found');
         }
         // XXX: maso, 1395: گرفتن پشتوانه
         return $backend->id;
@@ -84,7 +84,7 @@ class Bank_Form_ReceiptNew extends Pluf_Form
     {
         if (! $this->isValid()) {
             // TODO: maso, 1395: باید از خطای مدل فرم استفاده شود.
-            throw new Pluf_Exception('Cannot save a receipt from an invalid form.');
+            throw new \Pluf\Exception('Cannot save a receipt from an invalid form.');
         }
         // Set attributes
         $receipt = new Bank_Receipt();
@@ -93,16 +93,16 @@ class Bank_Form_ReceiptNew extends Pluf_Form
         // موجودیت قرار گیرد.
         if ($commit) {
             if (! $receipt->create()) {
-                throw new Pluf_Exception('fail to create the recipt.');
+                throw new \Pluf\Exception('fail to create the recipt.');
             }
         }
         return $receipt;
     }
 
     /**
-     * یک کد جدید برای موجودیت ایجاد می‌کند.
+     * Generates new secure key
      *
-     * @return unknown
+     * @return string
      */
     private function getSecureKey()
     {
