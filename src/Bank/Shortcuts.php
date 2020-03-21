@@ -108,7 +108,7 @@ function Bank_Shortcuts_IsCurrenciesCompatible($currency1, $currency2)
  * @param number $amount
  * @param string $fromCurrency
  * @param string $toCurrency
- * @throws Pluf_Exception_BadRequest
+ * @throws \Pluf\Exception_BadRequest
  * @return number
  */
 function Bank_Shortcuts_ConvertCurrency($amount, $fromCurrency, $toCurrency)
@@ -123,7 +123,7 @@ function Bank_Shortcuts_ConvertCurrency($amount, $fromCurrency, $toCurrency)
     if ($fromCurrency === 'IRT' && $toCurrency === 'IRR') {
         return $amount * 10;
     }
-    throw new Pluf_Exception_BadRequest('Could not convert amount from ' . $fromCurrency . 'to ' . $toCurrency);
+    throw new \Pluf\Exception_BadRequest('Could not convert amount from ' . $fromCurrency . 'to ' . $toCurrency);
 }
 
 

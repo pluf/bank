@@ -31,9 +31,9 @@ class Bank_Views_Transfer extends Pluf_Views
      *
      * @param Pluf_HTTP_Request $request
      * @param array $match
-     * @throws Pluf_Exception_BadRequest
-     * @throws Pluf_Exception_PermissionDenied
-     * @throws Pluf_Exception_DoesNotExist
+     * @throws \Pluf\Exception_BadRequest
+     * @throws \Pluf\Exception_PermissionDenied
+     * @throws \Pluf\Exception_DoesNotExist
      * @return Bank_Transfer
      */
     public function create($request, $match)
@@ -41,33 +41,33 @@ class Bank_Views_Transfer extends Pluf_Views
         // Check amount
         $amount = $request->REQUEST['amount'];
         if ($amount <= 0.0) {
-            throw new Pluf_Exception_BadRequest('Invalid amount. Amount should be positive value.');
+            throw new \Pluf\Exception_BadRequest('Invalid amount. Amount should be positive value.');
         }
         // Check wallets and permissions to access wallets
         Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
         $fromWallet = Pluf_Shortcuts_GetObjectOr404('Bank_Wallet', $match['parentId']);
         if ($request->user->getId() !== $fromWallet->owner_id) {
-            throw new Pluf_Exception_PermissionDenied("Permission is denied");
+            throw new \Pluf\Exception_PermissionDenied("Permission is denied");
         }
         if ($fromWallet->deleted) {
-            throw new Pluf_Exception_DoesNotExist("Source wallet is deleted!");
+            throw new \Pluf\Exception_DoesNotExist("Source wallet is deleted!");
         }
         $toWallet = Pluf_Shortcuts_GetObjectOr404('Bank_Wallet', $request->REQUEST['to_wallet_id']);
         if ($toWallet->deleted) {
-            throw new Pluf_Exception_DoesNotExist("Destination wallet is deleted!");
+            throw new \Pluf\Exception_DoesNotExist("Destination wallet is deleted!");
         }
         // Check for invalid transfer
         if ($fromWallet->id === $toWallet->id) {
-            throw new Pluf_Exception_BadRequest('Invalid transfer. Source and destination wallet of transfer could not be same.');
+            throw new \Pluf\Exception_BadRequest('Invalid transfer. Source and destination wallet of transfer could not be same.');
         }
         // Check currency of wallets
         if ($fromWallet->currency !== $toWallet->currency) {
-            throw new Pluf_Exception_BadRequest('Invalid transfer. Could not transfer between wallets with different currency.');
+            throw new \Pluf\Exception_BadRequest('Invalid transfer. Could not transfer between wallets with different currency.');
         }
         // Check if balance of source wallet is sufficeint
         $sourceBalance = $fromWallet->total_deposit - $fromWallet->total_withdraw;
         if ($sourceBalance < $amount) {
-            throw new Pluf_Exception_BadRequest('Insufficeint balance [balance: ' . $sourceBalance . ', transfer: ' . $amount . '].');
+            throw new \Pluf\Exception_BadRequest('Insufficeint balance [balance: ' . $sourceBalance . ', transfer: ' . $amount . '].');
         }
         // Create transfer
         $transfer = new Bank_Transfer();
@@ -118,7 +118,7 @@ class Bank_Views_Transfer extends Pluf_Views
         Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
         $wallet = Pluf_Shortcuts_GetObjectOr404('Bank_Wallet', $match['parentId']);
         if ($request->user->getId() !== $wallet->owner_id && ! User_Precondition::isOwner($request)) {
-            throw new Pluf_Exception_PermissionDenied("Permission is denied");
+            throw new \Pluf\Exception_PermissionDenied("Permission is denied");
         }
         $where = new Pluf_SQL('(`from_wallet_id`=%s OR `to_wallet_id`=%s) AND `receipt_id`=0', array(
             $wallet->id,
@@ -141,11 +141,11 @@ class Bank_Views_Transfer extends Pluf_Views
         Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
         $wallet = Pluf_Shortcuts_GetObjectOr404('Bank_Wallet', $match['parentId']);
         if ($request->user->getId() !== $wallet->owner_id && ! User_Precondition::isOwner($request)) {
-            throw new Pluf_Exception_PermissionDenied("Permission is denied");
+            throw new \Pluf\Exception_PermissionDenied("Permission is denied");
         }
         $transfer = Pluf_Shortcuts_GetObjectOr404('Bank_Transfer', $match['modelId']);
         if ($transfer->from_wallet_id !== $wallet->id && $transfer->to_wallet_id !== $wallet->id) {
-            throw new Pluf_Exception_DoesNotExist('The transfer is not blong to the wallet.');
+            throw new \Pluf\Exception_DoesNotExist('The transfer is not blong to the wallet.');
         }
         return $transfer;
     }
@@ -154,8 +154,8 @@ class Bank_Views_Transfer extends Pluf_Views
      *
      * @param Pluf_HTTP_Request $request
      * @param array $match
-     * @throws Pluf_Exception_BadRequest
-     * @throws Pluf_Exception_DoesNotExist
+     * @throws \Pluf\Exception_BadRequest
+     * @throws \Pluf\Exception_DoesNotExist
      * @return Bank_Transfer
      */
     public function createPayment($request, $match)
@@ -164,18 +164,18 @@ class Bank_Views_Transfer extends Pluf_Views
         Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
         $toWallet = Pluf_Shortcuts_GetObjectOr404('Bank_Wallet', $match['parentId']);
         if ($toWallet->deleted) {
-            throw new Pluf_Exception_DoesNotExist("Destination wallet is deleted!");
+            throw new \Pluf\Exception_DoesNotExist("Destination wallet is deleted!");
         }
         // Check amount
         $amount = $request->REQUEST['amount'];
         if ($amount <= 0.0) {
-            throw new Pluf_Exception_BadRequest('Invalid amount. Amount should be a positive value.');
+            throw new \Pluf\Exception_BadRequest('Invalid amount. Amount should be a positive value.');
         }
         // Check bank backend and currencies
         $backend = Pluf_Shortcuts_GetObjectOr404('Bank_Backend', $request->REQUEST['backend']);
         Pluf::loadFunction('Bank_Shortcuts_IsCurrenciesCompatible');
         if (! Bank_Shortcuts_IsCurrenciesCompatible($backend->currency, $toWallet->currency)) {
-            throw new Pluf_Exception_BadRequest('Invalid payment. Could not transfer between bank backend and wallet with different currency.');
+            throw new \Pluf\Exception_BadRequest('Invalid payment. Could not transfer between bank backend and wallet with different currency.');
         }
         $title = array_key_exists('title', $request->REQUEST) ? $request->REQUEST['title'] : 'Charge wallet ' . $toWallet->id;
         $description = array_key_exists('description', $request->REQUEST) ? $request->REQUEST['description'] : null;
@@ -224,8 +224,8 @@ class Bank_Views_Transfer extends Pluf_Views
      *
      * @param Pluf_HTTP_Request $request
      * @param array $match
-     * @throws Pluf_Exception_PermissionDenied
-     * @throws Pluf_Exception_DoesNotExist
+     * @throws \Pluf\Exception_PermissionDenied
+     * @throws \Pluf\Exception_DoesNotExist
      * @return Bank_Transfer
      */
     public function getPayment($request, $match)
@@ -234,12 +234,12 @@ class Bank_Views_Transfer extends Pluf_Views
         // Check wallets and permissions to access wallets
         $wallet = Pluf_Shortcuts_GetObjectOr404('Bank_Wallet', $match['parentId']);
         if ($request->user->getId() !== $wallet->owner_id && ! User_Precondition::isOwner($request)) {
-            throw new Pluf_Exception_PermissionDenied("Permission is denied");
+            throw new \Pluf\Exception_PermissionDenied("Permission is denied");
         }
         // Check payment
         $transfer = Pluf_Shortcuts_GetObjectOr404('Bank_Transfer', $match['modelId']);
         if ($transfer->from_wallet_id !== $wallet->id && $transfer->to_wallet_id !== $wallet->id) {
-            throw new Pluf_Exception_DoesNotExist('The payment is not blong to the wallet.');
+            throw new \Pluf\Exception_DoesNotExist('The payment is not blong to the wallet.');
         }
         $payment = Pluf_Shortcuts_GetObjectOr404('Bank_Receipt', $transfer->receipt_id);
         $preState = $payment->id >= 0 && $payment->isPayed();
@@ -273,7 +273,7 @@ class Bank_Views_Transfer extends Pluf_Views
      *
      * @param Pluf_HTTP_Request $request
      * @param array $match
-     * @throws Pluf_Exception_PermissionDenied
+     * @throws \Pluf\Exception_PermissionDenied
      * @return Pluf_Paginator
      */
     public function findPayments($request, $match)
@@ -281,7 +281,7 @@ class Bank_Views_Transfer extends Pluf_Views
         Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
         $wallet = Pluf_Shortcuts_GetObjectOr404('Bank_Wallet', $match['parentId']);
         if ($request->user->getId() !== $wallet->owner_id && ! User_Precondition::isOwner($request)) {
-            throw new Pluf_Exception_PermissionDenied("Permission is denied");
+            throw new \Pluf\Exception_PermissionDenied("Permission is denied");
         }
         $where = new Pluf_SQL('`to_wallet_id`=%s AND `receipt_id`<>0', array(
             $wallet->id

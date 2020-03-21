@@ -26,7 +26,7 @@ use Bank_Service;
 use Bank_Transfer;
 use Bank_Wallet;
 use Pluf;
-use Pluf_Exception_Unauthorized;
+use \Pluf\Exception_Unauthorized;
 use Pluf_Migration;
 use User_Account;
 use User_Credential;
@@ -137,7 +137,7 @@ class AnonymousRestTest extends TestCase
      */
     public function anonymousShouldNotCreateTransfer()
     {
-        $this->expectException(Pluf_Exception_Unauthorized::class);
+        $this->expectException(\Pluf\Exception_Unauthorized::class);
         // Create transfer
         $form = array(
             'to_wallet_id' => $this->wallet2->id,
@@ -162,7 +162,7 @@ class AnonymousRestTest extends TestCase
         $transfer->from_wallet_id = $this->wallet1;
         $transfer->to_wallet_id = $this->wallet2;
         $this->assertTrue($transfer->create(), 'Impossible to create wallet-to-wallet transfer');
-        $this->expectException(Pluf_Exception_Unauthorized::class);
+        $this->expectException(\Pluf\Exception_Unauthorized::class);
         $response = $this->client->get('/bank/wallets/' . $this->wallet1->id . '/transfers/' . $transfer->id);
         $this->assertNotNull($response);
         $this->assertEquals($response->status_code, 401);
@@ -174,7 +174,7 @@ class AnonymousRestTest extends TestCase
      */
     public function anonymousShouldNotGetListOfTransfers()
     {
-        $this->expectException(Pluf_Exception_Unauthorized::class);
+        $this->expectException(\Pluf\Exception_Unauthorized::class);
         $response = $this->client->get('/bank/wallets/' . $this->wallet1->id . '/transfers');
         $this->assertNotNull($response);
         $this->assertEquals($response->status_code, 401);

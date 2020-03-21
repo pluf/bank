@@ -77,7 +77,7 @@ class Bank_Form_ReceiptNew extends Pluf_Form
     /**
      *
      * @param string $commit
-     * @throws Pluf_Exception
+     * @throws \Pluf\Exception
      * @return Bank_Backend
      */
     function save($commit = true)
