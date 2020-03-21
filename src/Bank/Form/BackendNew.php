@@ -73,14 +73,14 @@ class Bank_Form_BackendNew extends Pluf_Form
      * می‌کند و آن را به متورهای پرداخت ملک اضافه می‌کند.
      *
      * @param string $commit
-     * @throws \Pluf\Exception
+     * @throws Pluf_Exception
      * @return Bank_Backend
      */
     function save($commit = true)
     {
         if (! $this->isValid()) {
             // TODO: maso, 1395: باید از خطای مدل فرم استفاده شود.
-            throw new \Pluf\Exception(__('Cannot save the backend from an invalid form.'));
+            throw new  \Pluf\Exception('Cannot save the backend from an invalid form.');
         }
         // Set attributes
         $backend = new Bank_Backend();
@@ -99,7 +99,7 @@ class Bank_Form_BackendNew extends Pluf_Form
         // موجودیت قرار گیرد.
         if ($commit) {
             if (! $backend->create()) {
-                throw new \Pluf\Exception(__('Fail to create the backend.'));
+                throw new  \Pluf\Exception('Fail to create the backend.');
             }
         }
         return $backend;

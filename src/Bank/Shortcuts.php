@@ -54,7 +54,7 @@ function Bank_Shortcuts_GetEngineOr404($type)
 
 /**
  *
- * @param unknown $id
+ * @param number $id
  * @throws Pluf_HTTP_Error404
  * @return Bank_Backend
  */
@@ -69,7 +69,7 @@ function Bank_Shortcuts_GetBankOr404($id)
 
 /**
  *
- * @param unknown $id
+ * @param number $id
  * @throws Pluf_HTTP_Error404
  * @return Bank_Receipt
  */
@@ -108,7 +108,7 @@ function Bank_Shortcuts_IsCurrenciesCompatible($currency1, $currency2)
  * @param number $amount
  * @param string $fromCurrency
  * @param string $toCurrency
- * @throws \Pluf\Exception_BadRequest
+ * @throws Pluf_Exception_BadRequest
  * @return number
  */
 function Bank_Shortcuts_ConvertCurrency($amount, $fromCurrency, $toCurrency)
@@ -123,7 +123,7 @@ function Bank_Shortcuts_ConvertCurrency($amount, $fromCurrency, $toCurrency)
     if ($fromCurrency === 'IRT' && $toCurrency === 'IRR') {
         return $amount * 10;
     }
-    throw new \Pluf\Exception_BadRequest('Could not convert amount from ' . $fromCurrency . 'to ' . $toCurrency);
+    throw new Pluf_Exception_BadRequest('Could not convert amount from ' . $fromCurrency . 'to ' . $toCurrency);
 }
 
 

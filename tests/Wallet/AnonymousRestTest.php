@@ -23,7 +23,7 @@ use Pluf\Test\Client;
 use Pluf\Test\TestCase;
 use Bank_Wallet;
 use Pluf;
-use \Pluf\Exception_Unauthorized;
+use Pluf_Exception_Unauthorized;
 use Pluf_Migration;
 use User_Account;
 use User_Credential;
@@ -93,7 +93,7 @@ class AnonymousRestTest extends TestCase
      */
     public function anonymousShouldNotCreateWallet()
     {
-        $this->expectException(\Pluf\Exception_Unauthorized::class);
+        $this->expectException(Pluf_Exception_Unauthorized::class);
         $form = array(
             'title' => 'wallet-' . rand(),
             'currency' => 'IRR',
@@ -110,7 +110,7 @@ class AnonymousRestTest extends TestCase
      */
     public function anonymousShouldNotGetWallet()
     {
-        $this->expectException(\Pluf\Exception_Unauthorized::class);
+        $this->expectException(Pluf_Exception_Unauthorized::class);
         $item = new Bank_Wallet();
         $item->title = 'wallet-' . rand();
         $item->currency = 'IRR';
@@ -130,7 +130,7 @@ class AnonymousRestTest extends TestCase
      */
     public function anonymousShouldNotUpdateWallet()
     {
-        $this->expectException(\Pluf\Exception_Unauthorized::class);
+        $this->expectException(Pluf_Exception_Unauthorized::class);
         $item = new Bank_Wallet();
         $item->title = 'wallet-' . rand();
         $item->currency = 'IRR';
@@ -154,7 +154,7 @@ class AnonymousRestTest extends TestCase
      */
     public function anonymousShouldNotDeleteWallet()
     {
-        $this->expectException(\Pluf\Exception_Unauthorized::class);
+        $this->expectException(Pluf_Exception_Unauthorized::class);
         $item = new Bank_Wallet();
         $item->title = 'wallet-' . rand();
         $item->currency = 'IRR';
@@ -175,7 +175,7 @@ class AnonymousRestTest extends TestCase
      */
     public function anonymousShouldNotGetListOfWallets()
     {
-        $this->expectException(\Pluf\Exception_Unauthorized::class);
+        $this->expectException(Pluf_Exception_Unauthorized::class);
         $response = $this->client->get('/bank/wallets');
         $this->assertNotNull($response);
         $this->assertEquals($response->status_code, 401);

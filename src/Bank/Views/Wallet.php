@@ -73,7 +73,7 @@ class Bank_Views_Wallet extends Pluf_Views
         Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
         $wallet = Pluf_Shortcuts_GetObjectOr404('Bank_Wallet', $match['modelId']);
         if ($request->user->getId() !== $wallet->owner_id && ! User_Precondition::isOwner($request)) {
-            throw new \Pluf\Exception_PermissionDenied("Permission is denied");
+            throw new Pluf_Exception_PermissionDenied("Permission is denied");
         }
         return $wallet;
     }
@@ -88,7 +88,7 @@ class Bank_Views_Wallet extends Pluf_Views
         Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
         $wallet = Pluf_Shortcuts_GetObjectOr404('Bank_Wallet', $match['modelId']);
         if ($request->user->getId() !== $wallet->owner_id) {
-            throw new \Pluf\Exception_PermissionDenied("Permission is denied");
+            throw new Pluf_Exception_PermissionDenied("Permission is denied");
         }
         return parent::deleteObject($request, $match, array(
             'model' => 'Bank_Wallet',
@@ -106,7 +106,7 @@ class Bank_Views_Wallet extends Pluf_Views
         Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
         $wallet = Pluf_Shortcuts_GetObjectOr404('Bank_Wallet', $match['modelId']);
         if ($request->user->getId() !== $wallet->owner_id) {
-            throw new \Pluf\Exception_PermissionDenied("Permission is denied");
+            throw new Pluf_Exception_PermissionDenied("Permission is denied");
         }
         return parent::updateObject($request, $match, array(
             'model' => 'Bank_Wallet'

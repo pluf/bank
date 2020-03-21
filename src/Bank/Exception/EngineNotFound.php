@@ -22,14 +22,14 @@
  * @author maso <mostafa.barmshory@dpq.co.ir>
  *
  */
-class Bank_Exception_EngineNotFound extends \Pluf\Exception
+class Bank_Exception_EngineNotFound extends  \Pluf\Exception
 {
 
     /**
      * یک نمونه از این کلاس ایجاد می‌کند.
      *
      * @param string $message            
-     * @param \Pluf\Exception $previous            
+     * @param Pluf_Exception $previous            
      * @param string $link            
      * @param string $developerMessage            
      */
