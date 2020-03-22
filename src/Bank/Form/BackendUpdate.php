@@ -67,7 +67,7 @@ class Bank_Form_BackendUpdate extends Pluf_Form
      * می‌کند و آن را به متورهای پرداخت ملک اضافه می‌کند.
      *
      * @param string $commit
-     * @throws Pluf_Exception
+     * @throws \Pluf\Exception
      * @return Bank_Backend
      */
     function update($commit = true)
