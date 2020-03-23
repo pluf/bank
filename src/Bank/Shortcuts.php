@@ -54,7 +54,7 @@ function Bank_Shortcuts_GetEngineOr404($type)
 
 /**
  *
- * @param unknown $id
+ * @param number $id
  * @throws Pluf_HTTP_Error404
  * @return Bank_Backend
  */
@@ -69,7 +69,7 @@ function Bank_Shortcuts_GetBankOr404($id)
 
 /**
  *
- * @param unknown $id
+ * @param number $id
  * @throws Pluf_HTTP_Error404
  * @return Bank_Receipt
  */
