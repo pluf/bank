@@ -18,7 +18,6 @@ return array(
         'http-method' => 'GET',
         'params' => array(
             'model' => 'Bank_Backend',
-            'view' => 'global',
             'sql' => new \Pluf_SQL('deleted=%s', array(FALSE))
         )
     ),

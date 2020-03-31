@@ -52,63 +52,63 @@ class Bank_Receipt extends Pluf_Model
         $this->_a['table'] = 'bank_receipt';
         $this->_a['cols'] = array(
             'id' => array(
-                'type' => 'Pluf_DB_Field_Sequence',
+                'type' => 'Sequence',
                 'blank' => true,
                 'editable' => false,
                 'readable' => true
             ),
             'secure_id' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => false,
                 'size' => 64,
                 'readable' => false
             ),
             'amount' => array(
-                'type' => 'Pluf_DB_Field_Integer',
+                'type' => 'Integer',
                 'blank' => false,
                 'unique' => false
             ),
             'title' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => false,
                 'size' => 50
             ),
             'description' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => true,
                 'size' => 200
             ),
             'email' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => true,
                 'size' => 100
             ),
             'phone' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => true,
                 'size' => 100
             ),
             // مسیر را تعیین می‌کند که بعد از تکمیل باید فراخوانی شود
             'callbackURL' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => true,
                 'size' => 200
             ),
             'payRef' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => true,
                 'size' => 200,
                 'readable' => true
             ),
             // مسیری رو تعیین می‌کنه که برای تکمیل خرید باید دنبال کنیم
             'callURL' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => true,
                 'size' => 200,
                 'readable' => true
             ),
             'payMeta' => array(
-                'type' => 'Pluf_DB_Field_Text',
+                'type' => 'Text',
                 'blank' => false,
                 'readable' => false
             ),
@@ -117,22 +117,22 @@ class Bank_Receipt extends Pluf_Model
              * سیستم باشد.
              */
             'owner_id' => array(
-                'type' => 'Pluf_DB_Field_Integer',
+                'type' => 'Integer',
                 'blank' => false,
                 'verbose' => 'owner ID'
             ),
             'owner_class' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => false,
                 'size' => 50
             ),
             'creation_dtime' => array(
-                'type' => 'Pluf_DB_Field_Datetime',
+                'type' => 'Datetime',
                 'blank' => true,
                 'verbose' => 'creation date'
             ),
             'modif_dtime' => array(
-                'type' => 'Pluf_DB_Field_Datetime',
+                'type' => 'Datetime',
                 'blank' => true,
                 'verbose' => 'modification date'
             ),
@@ -140,7 +140,7 @@ class Bank_Receipt extends Pluf_Model
              * Relations
              */
             'backend_id' => array(
-                'type' => 'Pluf_DB_Field_Foreignkey',
+                'type' => 'Foreignkey',
                 'model' => 'Bank_Backend',
                 'blank' => false,
                 'is_null' => false,
@@ -149,7 +149,6 @@ class Bank_Receipt extends Pluf_Model
                 'relate_name' => 'receipts'
             )
         );
-//         $this->_a['views'] = array();
     }
 
     /**
