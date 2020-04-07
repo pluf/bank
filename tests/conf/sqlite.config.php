@@ -19,18 +19,11 @@
  */
 $cfg = array();
 
-// Default database configuration. The database defined here will be
-// directly accessible from Pluf::db() of course it is still possible
-// to open any other number of database connections through Pluf_DB
-$cfg['db_login'] = 'root';
-$cfg['db_password'] = '';
-$cfg['db_server'] = 'localhost';
-$cfg['db_database'] = '/tmp/test.sqlite.db';
+$cfg['db_engine'] = '\Pluf\Db\SQLiteEngine';
+$cfg['db_database'] = '/tmp/pluf.test.sqlite.db';
 
-// Starting version 4.1 of MySQL the utf-8 support is "correct".
-// The reason of the db_version for MySQL is only for that.
-$cfg['db_version'] = '5.0';
-$cfg['db_engine'] = 'SQLite';
+$cfg['db_schema'] = '\Pluf\Db\SQLiteSchema';
+$cfg['db_schema_table_prefix'] = 'pluf_unit_tests_' . rand() . '_';
 
 return $cfg;
 

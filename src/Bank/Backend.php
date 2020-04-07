@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Pluf Framework, a simple PHP Application Framework.
  * Copyright (C) 2010-2020 Phoinex Scholars Co. (http://dpq.co.ir)
@@ -39,38 +40,43 @@ class Bank_Backend extends Pluf_Model
         $this->_a['table'] = 'bank_backend';
         $this->_a['cols'] = array(
             'id' => array(
-                'type' => 'Pluf_DB_Field_Sequence',
+                'type' => 'Sequence',
                 'blank' => true,
                 'verbose' => 'unique and no repreducable id fro reception'
             ),
             'title' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
-                'blank' => false,
+                'type' => 'Varchar',
+                'blank' => true,
+                'is_null' => true,
                 'size' => 50
             ),
             'description' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => true,
+                'is_null' => true,
                 'size' => 200
             ),
             'symbol' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
-                'blank' => false,
+                'type' => 'Varchar',
+                'blank' => true,
+                'is_null' => true,
                 'size' => 50
             ),
             'home' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => true,
+                'is_null' => true,
                 'size' => 50
             ),
             'redirect' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => false,
+                'is_null' => false,
                 'size' => 50,
                 'secure' => true
             ),
             'meta' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => false,
                 'secure' => true,
                 'size' => 3000,
@@ -78,13 +84,14 @@ class Bank_Backend extends Pluf_Model
                 'readable' => false
             ),
             'engine' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
+                'is_null' => false,
                 'blank' => false,
                 'size' => 50
             ),
             // Should be one of currecny alphabet codes in the list of currencies in the ISO 4217 (plus IRT for iran tooman)
             'currency' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => false,
                 'is_null' => false,
                 'size' => 50,
@@ -92,26 +99,21 @@ class Bank_Backend extends Pluf_Model
                 'readable' => true
             ),
             'deleted' => array(
-                'type' => 'Pluf_DB_Field_Boolean',
+                'type' => 'Boolean',
                 'blank' => false,
                 'default' => false,
                 'readable' => true,
                 'editable' => false
             ),
             'creation_dtime' => array(
-                'type' => 'Pluf_DB_Field_Datetime',
+                'type' => 'Datetime',
                 'blank' => true,
                 'verbose' => 'creation date'
             ),
             'modif_dtime' => array(
-                'type' => 'Pluf_DB_Field_Datetime',
+                'type' => 'Datetime',
                 'blank' => true,
                 'verbose' => 'modification date'
-            )
-        );
-        $this->_a['views'] = array(
-            'global' => array(
-                'select' => $this->getGlobalSelect()
             )
         );
     }
@@ -191,21 +193,22 @@ class Bank_Backend extends Pluf_Model
         }
     }
 
-    private function getGlobalSelect()
-    {
-        if (isset($this->_cache['getGlobalSelect']))
-            return $this->_cache['getGlobalSelect'];
-        $select = array();
-        $table = $this->getSqlTable();
-        foreach ($this->_a['cols'] as $col => $val) {
-            if (($val['type'] == 'Pluf_DB_Field_Manytomany') || (array_key_exists('secure', $val) && $val['secure'])) {
-                continue;
-            }
-            $select[] = $table . '.' . $this->_con->qn($col) . ' AS ' . $this->_con->qn($col);
-        }
-        $this->_cache['getSelect'] = implode(', ', $select);
-        return $this->_cache['getSelect'];
-    }
+    // private function getGlobalSelect()
+    // {
+    // if (isset($this->_cache['getGlobalSelect'])) {
+    // return $this->_cache['getGlobalSelect'];
+    // }
+    // $select = array();
+    // $table = $this->getSqlTable();
+    // foreach ($this->_a['cols'] as $col => $val) {
+    // if (($val['type'] == Engine::MANY_TO_MANY) || (array_key_exists('secure', $val) && $val['secure'])) {
+    // continue;
+    // }
+    // $select[] = $table . '.' . $this->_con->qn($col) . ' AS ' . $this->_con->qn($col);
+    // }
+    // $this->_cache['getSelect'] = implode(', ', $select);
+    // return $this->_cache['getSelect'];
+    // }
 
     /**
      *

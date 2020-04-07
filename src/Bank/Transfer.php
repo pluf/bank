@@ -20,7 +20,7 @@ class Bank_Transfer extends Pluf_Model
         $this->_a['verbose'] = 'Bank Transfer';
         $this->_a['cols'] = array(
             'id' => array(
-                'type' => 'Pluf_DB_Field_Sequence',
+                'type' => 'Sequence',
                 'blank' => false,
                 'is_null' => false,
                 'editable' => false,
@@ -28,7 +28,7 @@ class Bank_Transfer extends Pluf_Model
             ),
             // It should be a positive value
             'amount' => array(
-                'type' => 'Pluf_DB_Field_Float',
+                'type' => 'Float',
                 'blank' => false,
                 'is_null' => false,
                 'default' => 0.0,
@@ -36,7 +36,7 @@ class Bank_Transfer extends Pluf_Model
                 'readable' => true
             ),
             'description' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'blank' => true,
                 'is_null' => true,
                 'size' => 1024,
@@ -44,7 +44,7 @@ class Bank_Transfer extends Pluf_Model
                 'readable' => true
             ),
             'creation_dtime' => array(
-                'type' => 'Pluf_DB_Field_Datetime',
+                'type' => 'Datetime',
                 'blank' => false,
                 'is_null' => false,
                 'editable' => false,
@@ -54,7 +54,7 @@ class Bank_Transfer extends Pluf_Model
              * Relations
              */
             'acting_id' => array(
-                'type' => 'Pluf_DB_Field_Foreignkey',
+                'type' => 'Foreignkey',
                 'model' => 'User_Account',
                 'blank' => false,
                 'is_null' => false,
@@ -65,7 +65,7 @@ class Bank_Transfer extends Pluf_Model
                 'readable' => true
             ),
             'from_wallet_id' => array(
-                'type' => 'Pluf_DB_Field_Foreignkey',
+                'type' => 'Foreignkey',
                 'model' => 'Bank_Wallet',
                 'blank' => true,
                 'is_null' => true,
@@ -76,7 +76,7 @@ class Bank_Transfer extends Pluf_Model
                 'readable' => true
             ),
             'to_wallet_id' => array(
-                'type' => 'Pluf_DB_Field_Foreignkey',
+                'type' => 'Foreignkey',
                 'model' => 'Bank_Wallet',
                 'blank' => false,
                 'is_null' => false,
@@ -87,7 +87,7 @@ class Bank_Transfer extends Pluf_Model
                 'readable' => true
             ),
             'receipt_id' => array(
-                'type' => 'Pluf_DB_Field_Foreignkey',
+                'type' => 'Foreignkey',
                 'model' => 'Bank_Receipt',
                 'blank' => true,
                 'is_null' => true,
