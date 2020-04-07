@@ -46,27 +46,32 @@ class Bank_Backend extends Pluf_Model
             ),
             'title' => array(
                 'type' => 'Varchar',
-                'blank' => false,
+                'blank' => true,
+                'is_null' => true,
                 'size' => 50
             ),
             'description' => array(
                 'type' => 'Varchar',
                 'blank' => true,
+                'is_null' => true,
                 'size' => 200
             ),
             'symbol' => array(
                 'type' => 'Varchar',
-                'blank' => false,
+                'blank' => true,
+                'is_null' => true,
                 'size' => 50
             ),
             'home' => array(
                 'type' => 'Varchar',
                 'blank' => true,
+                'is_null' => true,
                 'size' => 50
             ),
             'redirect' => array(
                 'type' => 'Varchar',
                 'blank' => false,
+                'is_null' => false,
                 'size' => 50,
                 'secure' => true
             ),
@@ -80,6 +85,7 @@ class Bank_Backend extends Pluf_Model
             ),
             'engine' => array(
                 'type' => 'Varchar',
+                'is_null' => false,
                 'blank' => false,
                 'size' => 50
             ),

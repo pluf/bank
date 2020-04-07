@@ -53,63 +53,63 @@ class Bank_Receipt extends Pluf_Model
         $this->_a['cols'] = array(
             'id' => array(
                 'type' => 'Sequence',
-                'blank' => true,
+                'is_null' => true,
                 'editable' => false,
                 'readable' => true
             ),
             'secure_id' => array(
                 'type' => 'Varchar',
-                'blank' => false,
+                'is_null' => false,
                 'size' => 64,
                 'readable' => false
             ),
             'amount' => array(
                 'type' => 'Integer',
-                'blank' => false,
+                'is_null' => false,
                 'unique' => false
             ),
             'title' => array(
                 'type' => 'Varchar',
-                'blank' => false,
+                'is_null' => true,
                 'size' => 50
             ),
             'description' => array(
                 'type' => 'Varchar',
-                'blank' => true,
+                'is_null' => true,
                 'size' => 200
             ),
             'email' => array(
                 'type' => 'Varchar',
-                'blank' => true,
+                'is_null' => true,
                 'size' => 100
             ),
             'phone' => array(
                 'type' => 'Varchar',
-                'blank' => true,
+                'is_nul' => true,
                 'size' => 100
             ),
             // مسیر را تعیین می‌کند که بعد از تکمیل باید فراخوانی شود
             'callbackURL' => array(
                 'type' => 'Varchar',
-                'blank' => true,
+                'is_null' => true,
                 'size' => 200
             ),
             'payRef' => array(
                 'type' => 'Varchar',
-                'blank' => true,
+                'is_null' => true,
                 'size' => 200,
                 'readable' => true
             ),
             // مسیری رو تعیین می‌کنه که برای تکمیل خرید باید دنبال کنیم
             'callURL' => array(
                 'type' => 'Varchar',
-                'blank' => true,
+                'is_null' => false,
                 'size' => 200,
                 'readable' => true
             ),
             'payMeta' => array(
                 'type' => 'Text',
-                'blank' => false,
+                'is_null' => true,
                 'readable' => false
             ),
             /*
@@ -118,22 +118,22 @@ class Bank_Receipt extends Pluf_Model
              */
             'owner_id' => array(
                 'type' => 'Integer',
-                'blank' => false,
+                'is_null' => false,
                 'verbose' => 'owner ID'
             ),
             'owner_class' => array(
                 'type' => 'Varchar',
-                'blank' => false,
+                'is_null' => false,
                 'size' => 50
             ),
             'creation_dtime' => array(
                 'type' => 'Datetime',
-                'blank' => true,
+                'is_null' => true,
                 'verbose' => 'creation date'
             ),
             'modif_dtime' => array(
                 'type' => 'Datetime',
-                'blank' => true,
+                'is_null' => true,
                 'verbose' => 'modification date'
             ),
             /*
@@ -142,7 +142,7 @@ class Bank_Receipt extends Pluf_Model
             'backend_id' => array(
                 'type' => 'Foreignkey',
                 'model' => 'Bank_Backend',
-                'blank' => false,
+                'is_null' => false,
                 'is_null' => false,
                 'name' => 'backend',
                 'graphql_name' => 'backend',

@@ -70,7 +70,7 @@ class Bank_Service
     public static function create($param, $owner = null, $ownerId = null)
     {
         $form = new Bank_Form_ReceiptNew($param);
-        $receipt = $form->save();
+        $receipt = $form->save(false);
         if ($owner instanceof Pluf_Model) { // Pluf module
             $receipt->owner_class = $owner->getClass();
             $receipt->owner_id = $owner->getId();
@@ -85,7 +85,7 @@ class Bank_Service
         $backend = $receipt->get_backend();
         $engine = $backend->get_engine();
         $engine->create($receipt);
-        $receipt->update();
+        $receipt->create();
         $receipt->_a['cols']['secure_id']['readable'] = true;
         return $receipt;
     }
@@ -157,5 +157,60 @@ class Bank_Service
             new Bank_Engine_PayPall(),
             new Bank_Engine_BitPay()
         );
+    }
+    
+    /**
+     * Finds and returns a wallet with given currency and owned by given user.
+     * If there are multiple wallet with given properties it returns first of them as result.
+     * @param User_Account $user
+     * @param string $currency
+     * @return boolean|Bank_Wallet returns matched wallet or false if there is no wallet with given properties
+     */
+    public static function getWallet($user, $currency){
+        $model = new Bank_Wallet();
+        $where = new Pluf_SQL('`owner_id`=%s AND `currency`=%s', array(
+            $model->_toDb($user->id, 'owner_id'),
+            $model->_toDb($currency, 'currency')
+        ));
+        $wallets = $model->getList(array(
+            'filter' => $where->gen()
+        ));
+        if ($wallets === false or count($wallets) < 1) {
+            return false;
+        }
+        return $wallets[0];
+    }
+    
+    /**
+     *
+     * @param User_Account $user
+     * @param string $currency
+     * @return boolean|Bank_Wallet
+     */
+    /**
+     * Finds and returns all wallets with given currency and owned by given user
+     * @param User_Account $user
+     * @param string $currency
+     * @param boolean $includeDeleted determine that deleted wallets should be contained
+     * @return ArrayObject returns all wallets matched with given properties
+     */
+    public static function getWallets($user, $currency, $includeDeleted = FALSE){
+        $model = new Bank_Wallet();
+        // example: owner_id=1 AND currency='BTC'
+        $where = new Pluf_SQL('`owner_id`=%s AND `currency`=%s', array(
+            $model->_toDb($user->id, 'owner_id'),
+            $model->_toDb($currency, 'currency')
+        ));
+        if(!$includeDeleted){
+            $where->SAnd(new Pluf_SQL('`deleted` = %s', array($model->_toDb(FALSE, 'deleted'))));
+        }
+        $wallets = $model->getList(array(
+            'filter' => $where->gen(),
+            'order' => '`id` DESC'
+        ));
+        if ($wallets === false or count($wallets) < 1) {
+            return new ArrayObject();
+        }
+        return $wallets;
     }
 }
