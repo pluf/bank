@@ -31,7 +31,7 @@ class Bank_Form_ReceiptNew extends Pluf_Form
      */
     public function initFields($extra = array())
     {
-        $this->fields['amount'] = new Pluf_Form_Field_Integer(array(
+        $this->fields['amount'] = new Pluf_Form_Field_Float(array(
             'required' => true,
             'label' => 'amount'
         ));

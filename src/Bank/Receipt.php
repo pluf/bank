@@ -64,9 +64,10 @@ class Bank_Receipt extends Pluf_Model
                 'readable' => false
             ),
             'amount' => array(
-                'type' => 'Integer',
+                'type' => 'Float',
                 'is_null' => false,
-                'unique' => false
+                'unique' => false,
+                'default' => 0.0
             ),
             'title' => array(
                 'type' => 'Varchar',
