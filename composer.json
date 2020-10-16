@@ -1,6 +1,6 @@
 {
 	"name" : "pluf/bank",
-	"version" : "6.0.17",
+	"version" : "6.0.18",
 	"description" : "A pluf module to pay and manage online payments",
 	"type" : "library",
 	"license" : "MIT",
